@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# package lock files
+package-lock.json
+
+# Output directory from TypeScript
+dist/
+
+# Optional logs & runtime artifacts
+*.log
+*.tsbuildinfo
+
+# Ignore compiled JS in source (if you ever compile without outDir)
+**/*.js
+**/*.js.map
+
+# VSCode project settings
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Env files (if you later add Express, etc.)
+.env
+.env.local
+
+# Ignore Day 1 in initial commit
+day1-types/

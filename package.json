@@ -1,0 +1,22 @@
+{
+  "name": "learning-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "typescript",
+    "TS",
+    "learning"
+  ],
+  "license": "MIT",
+  "author": "Pranav Verma",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/index.js",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

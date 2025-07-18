@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                  // JS version output
+    "module": "commonjs",             // For Node.js
+    "strict": true,                   // Strict type checking
+    "outDir": "./dist",               // Output directory
+    "rootDir": "./src",               // Source code directory
+    "esModuleInterop": true,          // Interop with commonjs
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"]
+}
