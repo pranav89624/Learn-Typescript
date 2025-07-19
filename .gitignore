@@ -24,10 +24,3 @@ dist/
 # Env files (if you later add Express, etc.)
 .env
 .env.local
-
-# Ignore Some files in src/1-core-types
-9-literal-types.ts
-10-type-inference.ts
-11-type-assertions.ts
-12-never-type.ts
-13-typeof-keyof.ts

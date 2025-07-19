@@ -1069,3 +1069,448 @@ Useful for API filters, query models, or hybrid states.
 - Try conflicting fields and see what happens
 
 - Create a `HybridVehicle` type from `ElectricCar & PetrolCar` and list required properties
+
+---
+
+## 📘 Section 9 – Literal Types in TypeScript ([9-literal-types.ts](./9-literal-types.ts))
+
+Literal types let you restrict a variable to **a specific exact value**, rather than just a general type like `string` or `number`.
+
+---
+
+### ✅ What Are Literal Types?
+
+```ts
+let direction: "left" | "right" | "center";
+```
+Here, `direction` can only be one of those exact three strings.
+
+Anything else will cause a compile-time error.
+
+### 🔍 Use Cases in the Real World
+
+- Button variants: `"primary" | "secondary" | "ghost"`
+
+- API status: `"success" | "error" | "loading"`
+
+- Role access: `"admin" | "editor" | "viewer"`
+
+- Event names: `"click" | "hover"`
+
+- HTTP Methods: `"GET" | "POST" | "DELETE"`
+
+### 🔹 Literal Types + Type Aliases
+
+```ts
+type ButtonSize = "sm" | "md" | "lg";
+
+function createButton(size: ButtonSize) {
+  console.log(`Rendering a ${size} button`);
+}
+```
+
+### 🛡️ Narrowing via Literal Checks
+
+```ts
+type Status = "success" | "error" | "loading";
+
+function showStatus(state: Status) {
+  if (state === "success") {
+    console.log("✅ Success!");
+  } else if (state === "error") {
+    console.log("❌ Error!");
+  } else {
+    console.log("⏳ Loading...");
+  }
+}
+```
+
+### 🔄 Literal Types with Numbers and Booleans
+
+```ts
+type ZeroOrOne = 0 | 1;
+type Flag = true | false;
+```
+These are useful for enums, switches, toggles, pagination, etc.
+
+### 🔗 Literal + Union + Intersection
+ 
+You can combine literal types with unions and intersections for complex models:
+
+```ts
+type Role = "admin" | "user";
+type Access = { role: Role; canDelete: boolean };
+```
+This combo is what powers **discriminated unions**, and more advanced modeling techniques.
+
+### ⚠️ Common Mistake: Literal Inference
+
+```ts
+const role = "admin"; // inferred as "admin" ✅
+let role2 = "admin"; // inferred as string ❌
+```
+Use as const or a type annotation:
+```ts
+const role = "admin" as const;
+let role2: "admin" = "admin";
+```
+
+### 🧪 Mini Challenges
+
+- Create a `Theme` type with `"light"` | `"dark"` | `"system"` options
+
+- Write a function `setMode(mode: "auto" | "manual")` that logs a message
+
+- Model a `Direction` literal type and validate directions in a function
+
+- Restrict HTTP method to `"GET" | "POST"` and log appropriately
+
+---
+
+## 📘 Section 10 – Type Inference in TypeScript ([10-type-inference.ts](./10-type-inference.ts))
+
+**Type Inference** means TypeScript will automatically determine a variable’s type based on its value, **without you explicitly writing the type**.
+
+This keeps your code clean but still type-safe.
+
+---
+
+### ✅ Basic Example
+
+```ts
+let message = "Hello, world!"; // inferred as string
+let count = 42;                // inferred as number
+let isAdmin = true;          // inferred as boolean
+```
+
+### 🔍 Where Inference Happens
+
+1. Variable declarations
+2. Function return types
+3. Array contents
+4. Object structure
+5. Function parameters (when calling, not declaring)
+
+### 🚫 Function Parameters = No Inference
+You must explicitly type function parameters:
+
+```ts
+// ❌ BAD
+function square(x) {
+  return x * x; // 'x' is implicitly 'any'
+}
+
+// ✅ GOOD
+function square(x: number): number {
+  return x * x;
+}
+```
+Enable "`noImplicitAny`": true in your `tsconfig.json` to force this discipline (recommended).
+
+### 🔄 Inferred Return Types
+TS can infer return types based on the return value:
+```ts
+function greet(name: string) {
+  return `Hello, ${name}`;
+}
+// inferred return type: string
+```
+✅ Best practice: Let TS infer return types **unless** you're exposing a public API or library.
+
+### ✅ Inference in Arrays
+
+```ts
+const ids = [1, 2, 3];         // number[]
+const mixed = [1, "two", true]; // (string | number | boolean)[]
+```
+TS builds a **union** of the array’s content types automatically.
+
+### 🧠 Inference in Objects
+
+```ts
+const user = {
+  name: "Pranav",
+  age: 21,
+  isAdmin: false,
+};
+// inferred as { name: string; age: number; isAdmin: boolean }
+```
+You get **shape-based inference** without explicitly defining a type.
+
+### ⚠️ Common Pitfall: Overly Broad Inference
+```ts
+let value = null;     // inferred as any
+let emptyArr = [];    // inferred as any[]
+let obj = {};         // inferred as {}
+```
+🔍 Problem: These “any”-like defaults won't help you later.
+
+✅ Fix: Either initialize properly or annotate explicitly.
+
+### 🧠 Best Practice: Let TS Do the Work
+Use inference wherever possible, but always annotate when:
+
+- Exposing public APIs
+
+- Writing function parameters
+
+- Defining utility/helper functions
+
+- Enforcing strict design in teams
+
+### 🧪 Mini Challenges
+
+- Let TS infer the type of a `const` string, number, and boolean
+
+- Create a function `double(x)` and explicitly type the param & return
+
+- Create an array with multiple types → inspect the inferred type
+
+- Declare an object and log its inferred shape using hover
+
+---
+
+## 📘 Section 11 – Type Assertions in TypeScript ([11-type-assertions.ts](./11-type-assertions.ts))
+
+Type assertions tell TypeScript:  
+> “I know the actual type of this value better than you, trust me.”
+
+You’re not *changing* the type, just forcing the compiler to treat a value as a more specific one.
+
+---
+
+### ✅ Syntax
+
+```ts
+const input = someValue as SpecificType;
+
+//or (less common):
+const input = <SpecificType>someValue; // Only works outside of JSX
+```
+
+### 🧠 When to Use Type Assertion
+
+1. DOM Access
+
+```ts
+const input = document.querySelector("#email") as HTMLInputElement;
+input.value = "test@example.com";
+```
+
+2. Narrowing `unknown` or `any`
+
+```ts
+function handle(data: unknown) {
+  const user = data as { name: string };
+  console.log(user.name);
+}
+```
+
+3. JSON Parsing
+
+```ts
+const json = '{"id": 1, "title": "TS"}';
+const parsed = JSON.parse(json) as { id: number; title: string };
+```
+
+### ⚠️ Don't Overuse Type Assertions
+Using `as` too much = you’re telling TS to “shut up and trust me”
+
+That often means:
+
+🚨 You’re bypassing real type safety.
+
+### 🚫 NEVER Assert Incompatible Types
+
+```ts 
+let num = 42 as unknown as string; // ❌ DOUBLE ASSERTION HACK
+```
+You can trick the compiler but it’ll backfire.
+
+### 🧪 Mini Challenges
+
+- Select a DOM element and safely access a property (`as HTMLButtonElement`)
+
+- Parse a JSON string and assert its shape
+
+- Receive a value of type `unknown` and assert it into a valid user type
+
+- Assert a union type (`string | number`) to a specific one
+
+---
+
+## 📘 Section 12 – `never` Type in TypeScript ([12-never-type.ts](./12-never-type.ts))
+
+`never` means **something that never happens**.
+
+It represents values that **don’t exist** usually due to a function that **throws**, **never returns**, or a code path that is impossible to reach.
+
+---
+
+### ✅ Common Use Cases for `never`
+
+#### 1. **Function That Throws**
+```ts
+function throwError(message: string): never {
+  throw new Error(message);
+}
+```
+This function never returns, so its return type is `never`.
+
+#### 2. **Function That Loops Forever**
+```ts
+function infiniteLoop(): never {
+  while (true) {}
+}
+```
+Since it runs forever, there's no return also `never`.
+
+#### 3. **Exhaustive Checks (Best Practice)**
+Used in union types to ensure all cases are handled.
+```ts
+type Status = "loading" | "success" | "error";
+
+function handleStatus(status: Status) {
+  switch (status) {
+    case "loading":
+      console.log("Loading...");
+      break;
+    case "success":
+      console.log("Success!");
+      break;
+    case "error":
+      console.log("Error!");
+      break;
+    default:
+      const _exhaustiveCheck: never = status; // ✅ Safe: status must be 'never' here
+      return _exhaustiveCheck;
+  }
+}
+```
+✅ If you ever add a new status like "cancelled" and forget to handle it, TypeScript will error out at compile time.
+
+### ⚠️ When You See never Inferred
+It usually means:
+
+- You forgot a return
+
+- You made a logic mistake
+
+- Or your code path is unreachable
+
+### 🚫 Misuse Example
+
+```ts
+let value: never = 5; // ❌ Error: 5 is not assignable to never
+```
+
+### 🧪 Mini Challenges
+
+- Write a function that throws an error and type it as `never`
+
+- Use `never` for a switch-case exhaustiveness check
+
+- Create a union and assert that all cases are handled with a `default: never`
+
+---
+
+## 📘 Section 13 – `typeof` and `keyof` in TypeScript ([13-typeof-keyof.ts](./13-typeof-keyof.ts))
+
+These are **type-level operators**, not runtime JS.  
+They let you **derive** and **extract** types based on values or structures.
+
+---
+
+### ✅ `typeof` – Use Value to Create Type
+
+Use `typeof` to **get the type of a variable or object** and reuse it elsewhere.
+
+```ts
+const user = {
+  name: "Pranav",
+  age: 21,
+};
+
+type User = typeof user;
+```
+Now `User` is:
+```ts
+{
+  name: string;
+  age: number;
+}
+```
+### ✅ keyof – Extract Keys of a Type
+
+Use `keyof` to get the **property names** (keys) of a type as a union.
+
+```ts
+type UserKeys = keyof User; // "name" | "age"
+```
+Useful for:
+- Generic functions
+- Form validations
+- Mapping over keys
+
+### ✅ Combined Use: keyof typeof
+You can combine both to create types based on existing objects:
+
+```ts
+const roles = {
+  admin: "ADMIN",
+  user: "USER",
+  guest: "GUEST",
+};
+
+type Role = keyof typeof roles; // "admin" | "user" | "guest"
+```
+This turns object keys into a literal union type super useful in enums, permissions, dropdowns, etc.
+
+### 🔍 Real Use Case: Property Access Function
+
+```ts
+function getProp<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key];
+}
+```
+You can only pass keys that exist on `T`, and you get the correct value type returned.
+
+### ⚠️ Notes
+- `typeof` only works on existing values
+- `keyof` only works on types, not objects
+- `typeof` is not the same as JavaScript `typeof`
+
+### 🧪 Mini Challenges
+- Create a `typeof` type from a given object
+
+- Extract a union of keys using `keyof`
+
+- Write a function that takes only a key from an object
+
+- Create a union of keys from a config object (`keyof typeof`)
+
+---
+
+## 🎉 That's a wrap on Core Types!
+
+You've just built a rock solid foundation in TypeScript's type system enough to:
+
+- Write safer, more predictable code
+- Avoid hidden runtime bugs
+- Scale confidently into frameworks like React and Node.js
+
+Remember: understanding types isn't just about the syntax, it's about **thinking like the compiler**. And now you're doing that.
+
+---
+
+📦 **What’s next?**
+
+> ✅ Before moving on to Advanced Concepts, check out the summary and review in [`recap.md`](./recap.md)
+
+Inside you'll find:
+- A quick refresher on every topic
+- Real-world use tips
+- Common mistakes to avoid
+- A mini self-test to validate your knowledge
+
+---
