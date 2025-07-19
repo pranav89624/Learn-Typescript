@@ -26,7 +26,6 @@ dist/
 .env.local
 
 # Ignore Some files in src/1-core-types
-7-type-guards.ts
 8-intersection-types.ts
 9-literal-types.ts
 10-type-inference.ts

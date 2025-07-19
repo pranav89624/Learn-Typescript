@@ -771,7 +771,7 @@ operate(4, 2, (a, b) => a + b); // 6
 
 ---
 
-## 📘 Section 6 – Union Types in TypeScript
+## 📘 Section 6 – Union Types in TypeScript ([6-union-types.ts](./6-union-types.ts))
 
 Union types allow a variable, parameter, or return value to be **one of several types**.  
 Think of them as TypeScript’s version of "either this or that" and they’re used everywhere in real world apps.
@@ -861,3 +861,122 @@ This is called a **discriminated union** powerful pattern for handling APIs and 
 - Use a union to model a response that may return data or an error
 
 - Use `typeof` to safely process a `string | number`
+
+---
+
+## 📘 Section 7 – Type Guards in TypeScript ([7-type-guards.ts](./7-type-guards.ts))
+
+Type guards are **runtime checks** that narrow down the type of a variable within a specific block of code.
+
+Without them, TypeScript can only *guess* with them, it knows **exactly** what you're working with.
+
+---
+
+### ✅ Why Use Type Guards?
+
+Union types give you flexibility.  
+Type guards give you **control** over how to handle those types safely.
+
+```ts
+function printLength(val: string | string[]) {
+  if (typeof val === "string") {
+    console.log(val.length); // ✅ string.length
+  } else {
+    console.log(val.length); // ✅ array.length
+  }
+}
+```
+
+### 🔹 1. `typeof` Guard (for primitives)
+```ts
+function handle(input: string | number) {
+  if (typeof input === "string") {
+    console.log("Upper:", input.toUpperCase());
+  } else {
+    console.log("Doubled:", input * 2);
+  }
+}
+```
+✅ Works for: `string`, `number`, `boolean`, `symbol`, `bigint`, `function`, `undefined`
+
+### 🔹 2. `in` Operator Guard (for objects with common fields)
+
+```ts
+type Admin = { name: string; privileges: string[] };
+type User = { name: string; email: string };
+
+function printInfo(person: Admin | User) {
+  if ("privileges" in person) {
+    console.log("Admin privileges:", person.privileges);
+  } else {
+    console.log("User email:", person.email);
+  }
+}
+```
+✅ Use when types share a similar structure but have different keys.
+
+### 🔹 3. `instanceof` Guard (for class-based types)
+
+```ts
+class Car {
+  drive() {
+    console.log("Driving...");
+  }
+}
+
+class Truck {
+  loadCargo() {
+    console.log("Loading cargo...");
+  }
+}
+
+function operate(vehicle: Car | Truck) {
+  if (vehicle instanceof Truck) {
+    vehicle.loadCargo();
+  } else {
+    vehicle.drive();
+  }
+}
+```
+✅ Use when working with class instances, especially in OOP heavy apps.
+
+### 🔹 4. Custom Type Guard (with `is` keyword)
+
+Let’s say you have types that can't be distinguished with keys:
+
+```ts
+type Dog = { bark(): void };
+type Cat = { meow(): void };
+
+function isDog(animal: Dog | Cat): animal is Dog {
+  return (animal as Dog).bark !== undefined;
+}
+
+function makeSound(animal: Dog | Cat) {
+  if (isDog(animal)) {
+    animal.bark(); // ✅ Fully typed as Dog
+  } else {
+    animal.meow(); // ✅ Fully typed as Cat
+  }
+}
+```
+✅ Use for fine-grained control and custom logic.
+
+### 🔍 Recap: When to Use What?
+
+| Guard Type    | Use When...                        |
+| ------------- | ---------------------------------- |
+| `typeof`      | Checking primitive types           |
+| `in`          | Discriminating between object keys |
+| `instanceof`  | Class instances                    |
+| Custom (`is`) | Fine control over union types      |
+
+### 🧪 Mini Challenges
+
+- Create a function that accepts `string | string[]` and prints each character/item
+
+- Create a type `Square | Circle`, and use `in` to distinguish between them
+
+- Build a simple custom type guard: `isAdmin(person): person is Admin`
+
+- Use `instanceof` for `Date` vs `string`
