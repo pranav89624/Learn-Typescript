@@ -768,3 +768,96 @@ operate(4, 2, (a, b) => a + b); // 6
 - Define a type alias for a math operation and use it
 
 - Create a function that accepts a callback and logs `"Done"` after callback runs
+
+---
+
+## 📘 Section 6 – Union Types in TypeScript
+
+Union types allow a variable, parameter, or return value to be **one of several types**.  
+Think of them as TypeScript’s version of "either this or that" and they’re used everywhere in real world apps.
+
+---
+
+### 🔹 Basic Syntax
+
+```ts
+let value: string | number;
+
+value = "hello";   // ✅ OK
+value = 42;        // ✅ OK
+value = true;      // ❌ Error
+```
+
+### 🧠 Real-World Examples
+- Form inputs that accept string/number
+
+- API response types (`string | null`)
+
+- Event payloads
+
+- Error handling (`Error | string`)
+
+- React state (`boolean | 'loading' | 'error'`)
+
+### 🔍 Union in Function Parameters
+
+```ts
+function printId(id: string | number) {
+  console.log("ID:", id);
+}
+```
+
+### ⚠️ Limitations: No Shared Methods
+When using union types, you can only use common members between all types:
+
+```ts
+function double(input: number | string) {
+  // return input * 2; // ❌ Error: string doesn't support '*'
+}
+```
+### ✅ Narrowing with typeof
+Use type narrowing to work safely inside unions:
+
+```ts
+function double(input: number | string) {
+  if (typeof input === "number") {
+    return input * 2;
+  }
+  return input + input;
+}
+```
+
+### 📋 Union in Object Types
+
+```ts
+type Success = { status: "success"; data: string };
+type Failure = { status: "error"; message: string };
+
+type ApiResponse = Success | Failure;
+
+function handleResponse(res: ApiResponse) {
+  if (res.status === "success") {
+    console.log("Data:", res.data);
+  } else {
+    console.error("Error:", res.message);
+  }
+}
+```
+This is called a **discriminated union** powerful pattern for handling APIs and conditions.
+
+### 🧠 Best Practices
+- Use unions to model flexible inputs or return values
+
+- Always narrow types using `typeof`, `in`, or tagged fields (`res.status`)
+
+- Avoid `any` unions + narrowing give better control
+
+### 🧪 Mini Challenges
+
+- Declare a variable that can be either a string or null
+
+- Create a function that accepts `boolean | "loading" | "error"` and logs appropriately
+
+- Use a union to model a response that may return data or an error
+
+- Use `typeof` to safely process a `string | number`
