@@ -980,3 +980,92 @@ function makeSound(animal: Dog | Cat) {
 - Build a simple custom type guard: `isAdmin(person): person is Admin`
 
 - Use `instanceof` for `Date` vs `string`
+
+---
+
+## 📘 Section 8 – Intersection Types in TypeScript ([8-intersection-types.ts](./8-intersection-types.ts))
+
+While union types let you accept **one of many types**,  
+**intersection types** force you to combine multiple types into one requiring that **all properties** are present.
+
+Think of it like merging objects or interfaces:  
+```ts
+type A = { name: string };
+type B = { age: number };
+type C = A & B; // Must have both name & age
+```
+
+### ✅ Syntax: type A & B
+
+```ts
+type Developer = {
+  name: string;
+  skills: string[];
+};
+
+type Manager = {
+  department: string;
+  employees: number;
+};
+
+type TechLead = Developer & Manager;
+
+const lead: TechLead = {
+  name: "Pranav",
+  skills: ["TypeScript", "React"],
+  department: "Engineering",
+  employees: 4,
+};
+```
+Here, `TechLead` must satisfy both `Developer` and `Manager`.
+
+### 🧠 Real-World Use Cases
+
+- Merging features (like role-based access: `Admin & Auditor`)
+
+- Reusing types from multiple models
+
+- Building enhanced or hybrid user roles (`User & Profile & Permissions`)
+
+- Merging class types (with interface extension)
+
+### ⚠️ Conflicts in Intersections
+If both types declare the same property with different types, you’ll get a conflict:
+
+```ts
+type A = { value: string };
+type B = { value: number };
+
+type C = A & B; // ❌ Error: 'string' & 'number' is never
+```
+TypeScript won’t let you create impossible intersections this is by design.
+
+### ✅ Intersection of Union Types
+Yes, it's valid (and weird but powerful):
+```ts
+type A = { kind: "cat" } | { kind: "dog" };
+type B = { legs: number };
+
+type C = A & B; // Must be cat or dog AND have legs
+```
+Useful for API filters, query models, or hybrid states.
+
+### 🔍 Intersection vs Union Summary
+
+
+| **Feature**   | **Union**                    |**Intersection**                    |
+| ------------- | ---------------------------------- | ---------------------------------- |
+| Behavior      | Either A or B                      | Must be A and B                    |
+| Flexibility   | More flexible                      | More strict / specific             |
+| Use Case      | Overloads, optional inputs         | Role merging, strict modeling      |
+| Pitfalls      | Needs narrowing                    | Property conflicts cause error     |
+
+### 🧪 Mini Challenges
+
+- Create `Author` and `Publisher` types, and an intersection type `BookContributor`
+
+- Build a function that accepts a `User & Permissions` and logs both
+
+- Try conflicting fields and see what happens
+
+- Create a `HybridVehicle` type from `ElectricCar & PetrolCar` and list required properties
