@@ -25,5 +25,12 @@ dist/
 .env
 .env.local
 
-# Ignore Day 1 in initial commit
-day1-types/
+# Ignore Some files in src/1-core-types
+6-union-types.ts
+7-type-guards.ts
+8-intersection-types.ts
+9-literal-types.ts
+10-type-inference.ts
+11-type-assertions.ts
+12-never-type.ts
+13-typeof-keyof.ts
