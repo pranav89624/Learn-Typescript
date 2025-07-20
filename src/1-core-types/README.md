@@ -87,4 +87,4 @@ If not, pause and refresh your JS foundation it’ll 10x your TS learning curve.
 ## 🏁 After Core Types
 You're now ready to move into:
 
-### [**`➡️ 2-advanced-types/`**](../2-advanced-types/)
+### [**`➡️ 2-intermediate-types/`**](../2-intermediate-types/)

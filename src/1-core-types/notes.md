@@ -1505,7 +1505,7 @@ Remember: understanding types isn't just about the syntax, it's about **thinking
 
 📦 **What’s next?**
 
-> ✅ Before moving on to Advanced Concepts, check out the summary and review in [`recap.md`](./recap.md)
+> ✅ Before moving on to Intermediate Concepts, check out the summary and review in [`recap.md`](./recap.md)
 
 Inside you'll find:
 - A quick refresher on every topic

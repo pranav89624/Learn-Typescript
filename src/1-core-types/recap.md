@@ -126,6 +126,6 @@ You now understand the core building blocks of TypeScript — what most develope
 
 🚀 Ready for the real magic?
 
-### ➡️ Next up: [2-advanced-types/](../2-advanced-types/)  
+### ➡️ Next up: [2-intermediate-types/](../2-intermediate-types/)  
 Where TypeScript gets more powerful, generic, conditional, and reusable.
 
