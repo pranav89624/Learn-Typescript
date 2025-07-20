@@ -302,3 +302,158 @@ When you say "get my name", it knows to look in the right place.
 
 ---
 
+## Section 4 – Access Modifiers in TypeScript ([04-access-modifiers.ts](./04-access-modifiers.ts))
+
+### 🧠 What Are Access Modifiers?
+
+Access modifiers are keywords that control where class properties and methods can be accessed from.
+
+### 🛠️ Types of Access Modifiers
+
+1. **Public**: The default modifier. Members are accessible from anywhere.
+2. **Private**: Members are only accessible within the class.
+3. **Protected**: Members are accessible within the class and its subclasses.
+
+---
+
+### 🔓 `public` (default)
+
+- Accessible **from anywhere** — inside or outside the class
+- You don’t need to explicitly write `public` (but you can)
+
+```ts
+class User {
+  public name: string = "Pranav";
+}
+const u = new User();
+console.log(u.name); // ✅ allowed
+```
+
+### 🔒 `private`
+- Accessible only inside the class
+- Used to hide internal logic or implementation details
+
+```ts
+class BankAccount {
+  private balance: number = 1000;
+
+  showBalance() {
+    console.log(`Your balance is ₹${this.balance}`);
+  }
+}
+
+const acc = new BankAccount();
+// acc.balance ❌ Error: Property 'balance' is private
+acc.showBalance(); // ✅ Works
+```
+
+### 🧱 `protected`
+Like `private`, but also accessible inside child classes
+
+```ts
+class Animal {
+  protected sound: string = "Some sound";
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log(this.sound); // ✅ allowed because it's a subclass
+  }
+}
+```
+
+### 🛡️ Why Use Access Modifiers?
+- ✅ Prevent misuse or modification of internal properties
+- ✅ Enforce boundaries and abstraction
+- ✅ Write maintainable and secure code
+- ✅ Make your code self-documenting by showing intent
+- ✅ Help TypeScript catch errors at compile time
+- ✅ Allow you to change implementation details without breaking external code
+
+### 🚀 Real-World Analogy
+> Access modifiers are like security guards at a building.
+- **Public** areas are open to everyone.
+- **Private** areas are restricted to authorized personnel.
+- **Protected** areas are accessible to authorized personnel and their guests.
+
+### 🧪 Mini Challenges
+
+1. Create a class `Person` with a `name` (public) and `ssn` (private) field
+    - <small>Try accessing both from outside</small>
+
+2. Create a class `Employee` with a `protected` method `logWork()`
+    - <small>Extend it with a `Developer` class and call `logWork()` from there</small>
+
+3. Use a method in the parent class to safely access a `private` property instead of exposing it directly
+
+---
+
+## Section 5 – Inheritance in TypeScript ([05-inheritance.ts](./05-inheritance.ts))
+
+### 🧠 What is Inheritance?
+
+Inheritance is the mechanism that allows one class (child) to inherit properties and methods from another class (parent).
+
+> It’s how we **reuse code** across similar types and define hierarchies.
+
+
+### 🧱 Base & Derived Classes
+
+- The **base class** (aka parent or super class) holds common logic
+- The **derived class** (aka child or subclass) adds or overrides functionality
+
+```ts
+class Animal {
+  move() {
+    console.log("Animal is moving");
+  }
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log("Dog barks");
+  }
+}
+
+const d = new Dog();
+d.move(); // ✅ inherited
+d.bark(); // ✅ own method
+``` 
+
+### 🧠 The `super()` Keyword
+When the parent class has a constructor, the child **must** call it using `super(...)`, before accessing `this`.
+
+```ts
+class Animal {
+  constructor(public name: string) {}
+}
+
+class Dog extends Animal {
+  constructor(name: string, public breed: string) {
+    super(name); // ✅ must call super()
+  }
+}
+```
+
+### ✅ Why Use Inheritance?
+- Reuse logic across multiple classes
+- DRY (Don't Repeat Yourself) principle
+- Build layered, clean, hierarchical designs
+
+### ❗ Don't Abuse It
+Use inheritance for shared behavior, not just to "organize code." If things don’t share real functionality, composition might be better than inheritance.
+
+### 🚀 Real-World Analogy
+> Inheritance is like a family tree.
+- The **parent** class is like a parent who passes down traits to their children.
+- The **child** class inherits those traits but can also have its own unique features.
+
+### 🧪 Mini Challenges
+1. Create a base class `Vehicle` with a `drive()` method <br>
+<small>Then create `Car` and `Bike` subclasses that extend it and add their own methods.</small>
+
+2. Add a constructor in `Vehicle` and call it from `Car` using `super(...)`
+
+3. Override the `drive()` method in `Car` to include `"Car is driving"` <br>
+<small>Use `super.drive()` inside the override to include base logic too.</small>
+
