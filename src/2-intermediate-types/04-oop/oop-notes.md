@@ -517,3 +517,275 @@ Getters and setters are like a **bank account**:
     - Add getter for Fahrenheit conversion
     - Add setter to update via Fahrenheit
 
+
+---
+
+## Section 7 – Static Members in TypeScript ([07-static-members.ts](./07-static-members.ts))
+
+### 🧠 What Are Static Members?
+
+**Static members** belong to the class itself, not to instances.
+
+- You **don’t need to instantiate** the class to access them  
+- They're often used for:
+  - Global utility methods
+  - Class-wide constants
+  - Tracking shared state
+
+
+```ts
+class AppConfig {
+  static appName: string = "MyApp";
+
+  static logAppName() {
+    console.log(`App: ${AppConfig.appName}`);
+  }
+}
+
+AppConfig.logAppName(); // ✅ No need to `new` anything
+```
+
+---
+
+### 🚫 You Cannot Access `this` in the Usual Way
+Inside a static method, `this` refers to the class itself — not to an instance.
+
+```ts
+class Counter {
+  static count = 0;
+
+  static increment() {
+    this.count++; // ✅ works — 'this' refers to class
+  }
+}
+```
+
+### ✅ Why Use Static Members?
+- **Utility Functions**: Like `Math.max()`, they don’t need an instance
+- **Constants**: Define values that are shared across all instances
+- **Factory Methods**: Create instances in a controlled way
+- **Shared State**: Track data that should be common to all instances
+
+### ⚡ When to Use Static?
+
+✅ When the property/method:
+
+- Doesn't depend on any specific object
+- Is used across all instances
+- Is utility-based (e.g., validation, parsing)
+
+❌ Don’t use static when behavior depends on unique object data.
+
+### 🚀 Real-World Analogy
+Static members are like **company policies**:
+- They apply to everyone in the company (class)
+- You don’t need to be an employee (instance) to know the policy
+- They are defined at the company level, not individual employee level
+
+### 🧪 Mini Challenges
+1. Create a `MathUtil` class with static methods: `add(a, b)` and `multiply(a, b)`
+    - No need to instantiate
+
+2. Create a `User` class with a static property `totalUsers` that increases every time a new user is created
+    - Log total users after creating 3 different users
+
+---
+
+## Section 8 – Abstract Classes in TypeScript ([08-abstract-classes.ts](./08-abstract-classes.ts))
+
+### 🧠 What Is an Abstract Class?
+
+An **abstract class** cannot be instantiated directly.  
+It serves as a **blueprint** for other classes, it may contain:
+
+- Concrete methods (fully implemented)
+- `abstract` methods (declared but not implemented)
+
+```ts
+abstract class Animal {
+  abstract makeSound(): void;
+
+  move(): void {
+    console.log("Moving...");
+  }
+}
+```
+
+---
+
+### 🚫 Why Can’t You Instantiate It?
+
+```ts
+const a = new Animal(); // ❌ Error: Cannot create an instance of abstract class
+```
+> Abstract classes force subclasses to implement required logic <br>
+Great for teams and large scale projects to maintain consistency
+
+### ✅ Using Abstract Methods
+
+```ts 
+class Dog extends Animal {
+  makeSound() {
+    console.log("Woof!");
+  }
+}
+```
+- Dog must implement makeSound()
+- But it inherits move() from Animal automatically
+
+### ✅ Why Use Abstract Classes?
+- **Enforce Structure**: Ensure subclasses implement certain methods
+- **Code Reuse**: Share common logic while requiring specific implementations
+- **Design Patterns**: Useful in patterns like Factory, Strategy, etc.
+- **Type Safety**: TypeScript checks that subclasses implement required methods
+
+### 🔄 Abstract vs Interface
+| Abstract Class               | Interface                   |
+| ---------------------------- | --------------------------- |
+| Can have implementations     | Only declarations           |
+| Supports access modifiers    | No access modifiers allowed |
+| One abstract class per child | Multiple interfaces allowed |
+
+You’ll typically use:
+- Abstract class when you're modeling inheritance with logic
+- Interface when you're describing structure without behavior
+
+### 🚀 Real-World Analogy
+An abstract class is like a **contract**:
+- It defines what must be done, but not how
+- Subclasses are like different companies that must follow the contract but can implement it in their own way
+
+### 🧪 Mini Challenges
+
+1. Create an abstract class `Shape` with:
+    - `abstract getArea(): number`
+    - `describe(): void` method (non-abstract)
+
+Create `Circle` and `Rectangle` classes extending `Shape` and implement `getArea()`.
+
+2. Add a `name` property in `Shape` and use it in `describe()` to log the shape name.
+
+---
+
+## Section 9 – OOP Patterns in TypeScript ([09-oop-patterns.ts](./09-oop-patterns.ts))
+
+### 🎯 What You'll Learn
+
+✅ Key OOP patterns used in real-world TypeScript projects  
+✅ How to structure reusable and clean code using patterns  
+✅ Production-level mental models for scalable systems
+
+---
+
+### 🧠 Why Patterns Matter
+
+Design patterns are **reusable solutions to common problems** in software design.  
+They help improve:
+- **Code readability**
+- **Maintainability**
+- **Reusability**
+- **Team collaboration**
+
+> Patterns aren’t libraries or code – they’re **proven blueprints** to solve recurring architectural challenges.
+
+---
+
+### 🔁 Three Core OOP Patterns (for TypeScript devs)
+
+These are often used in **frameworks, backend logic, and large apps**.
+
+---
+
+### 1. **Singleton Pattern**
+
+**Use Case:** A class should have **only one instance** globally.
+
+```ts
+class AppSettings {
+  private static instance: AppSettings;
+
+  private constructor() {}
+
+  static getInstance(): AppSettings {
+    if (!AppSettings.instance) {
+      AppSettings.instance = new AppSettings();
+    }
+    return AppSettings.instance;
+  }
+
+  version = "1.0.0";
+}
+```
+- **Why Use It?**: To manage global state or configuration without creating multiple instances.
+- **Example**: Database connection, configuration settings, logging service, Auth handlers, Caching, etc.
+
+### 2. Factory Pattern
+**Use Case**:** Encapsulate object creation logic based on conditions or input.
+
+```ts
+class Dog {
+  speak() {
+    console.log("Woof");
+  }
+}
+
+class Cat {
+  speak() {
+    console.log("Meow");
+  }
+}
+
+type AnimalType = "dog" | "cat";
+
+class AnimalFactory {
+  static createAnimal(type: AnimalType) {
+    if (type === "dog") return new Dog();
+    if (type === "cat") return new Cat();
+    throw new Error("Invalid type");
+  }
+}
+```
+- **Why Use It?**: To decouple object creation from usage, allowing for easier changes and testing.
+- **Example**: Creating different types of objects based on user input, API responses, Service factories, Theme or UI component loaders, etc.
+
+### 3. Observer Pattern
+**Use Case**: An object notifies others when its state changes.
+
+```ts
+type Listener = () => void;
+
+class Counter {
+  private count = 0;
+  private listeners: Listener[] = [];
+
+  addListener(fn: Listener) {
+    this.listeners.push(fn);
+  }
+
+  increment() {
+    this.count++;
+    this.listeners.forEach((l) => l());
+  }
+
+  get value() {
+    return this.count;
+  }
+}
+```
+- **Why Use It?**: To create a **publish subscribe** model where objects can react to changes without tight coupling.
+- **Example**: Event systems, UI frameworks (like React), real time updates, Notifications, etc.
+
+### 🚀 Real-World Analogy
+- **Singleton**: Like a **global configuration file** that everyone in the app reads from.
+- **Factory**: Like a **restaurant menu** that decides which dish to prepare based on customer choice.
+- **Observer**: Like a **news channel** that broadcasts updates to all subscribers when something happens.
+
+### 🧪 Mini Challenges
+
+1. Implement a singleton Logger that logs messages with timestamps
+    - Ensure all logs come from the same instance
+
+2. Use a factory to generate user roles: `Admin`, `Editor`, `Viewer`
+   - Each role should have a `describe()` method
+
+3. Create a counter with observers that auto-log value changes
