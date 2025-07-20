@@ -313,3 +313,47 @@ Try answering or writing these:
    Does it work?
 
 4. Declare a `Maybe<T>` type alias that allows `null | undefined`.
+
+---
+
+## 🚀 Section 4 - Mastering OOP in TypeScript ([04-oop/](./04-oop/))
+
+Before we dive into things like function overloading and modules, it's time to **level up your TypeScript mindset** with something critical: **Object-Oriented Programming (OOP)**.
+
+---
+
+### 🧠 Why a Separate OOP Folder?
+
+I’ll split the OOP content into a dedicated folder (`2-intermediate-types/04-oop/`) for a few important reasons:
+
+- 🧩 It’s a **big topic** : trying to cram it in here would be messy and rushed.  
+- 🛠️ It’s **essential** : you’ll use OOP patterns in real production code, security systems, and scalable architecture.  
+- 🗂️ It's **modularized into sub parts** for better understanding: Classes, Objects, `this`, inheritance, modifiers, abstract classes, and more.
+
+
+### 🔥 What You’ll Learn There
+
+In the OOP section, you'll go from:
+
+✅ Creating basic classes & objects  
+✅ Understanding how constructors work  
+✅ Understanding how `this` works in TS  
+✅ Applying **Access Modifiers** like `private`, `protected`, `readonly`  
+✅ Implementing **Inheritance**  
+✅ Using **Getters & Setters**, **Static members**, and **Abstract Classes**  
+✅ Learning patterns that improve **security**, **reusability**, and **testability**
+
+
+> ⚠️ This is **not just OOP for theory**, it's OOP that translates directly into writing professional, scalable apps.
+
+
+### 📍 Follow the Path, In Order
+
+This section is **broken down into small files**, so follow them step by step.  
+👉 Start from: [`04-oop/01-classes-objects.ts`](./04-oop/01-classes-objects.ts) and work your way through.  
+Each subpart will include real examples, code snippets, and mini challenges to solidify your understanding.
+
+---
+
+Ready to move like a real dev? Let’s get into the **heart of how TypeScript powers real-world architecture** jump into [`04-oop/`](./04-oop/) now. 💥
+
