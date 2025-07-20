@@ -457,3 +457,63 @@ Use inheritance for shared behavior, not just to "organize code." If things don�
 3. Override the `drive()` method in `Car` to include `"Car is driving"` <br>
 <small>Use `super.drive()` inside the override to include base logic too.</small>
 
+---
+
+## Section 6 – Getters and Setters in TypeScript ([06-getters-setters.ts](./06-getters-setters.ts))
+
+### 🧠 What Are Getters and Setters?
+
+They are **special methods** that look like properties but let you run logic when reading (`get`) or writing (`set`) a value.
+
+They help you:
+- Protect internal class properties
+- Run custom logic during access/update
+- Avoid exposing fields directly
+
+---
+
+### 🛠 Syntax
+
+```ts
+class User {
+  private _age: number = 0;
+
+  get age() {
+    return this._age;
+  }
+
+  set age(value: number) {
+    if (value < 0) throw new Error("Age cannot be negative");
+    this._age = value;
+  }
+}
+```
+- ✅ Access like a property: `user.age = 25`
+- ✅ Behind the scenes, it runs `set age()` or `get age()`
+
+### ⚠️ Naming Convention
+- Prefix private fields with `_` to distinguish them
+- `get` and `set` must be named exactly like the property being accessed
+
+### ✅ Why Use Getters and Setters?
+- **Encapsulation**: Hide internal state and expose controlled access
+- **Validation**: Run checks before setting values
+- **Computed Properties**: Calculate values dynamically when accessed
+- **Readability**: Makes code cleaner and more intuitive
+- **Maintainability**: Change internal logic without affecting external code
+
+### 🚀 Real-World Analogy
+Getters and setters are like a **bank account**:
+- You can deposit and withdraw money (set and get values)
+- The bank ensures you can't withdraw more than you have (validation)
+- You see your balance (computed property) without knowing the internal workings
+
+### 🧪 Mini Challenges
+1. Create a `Product` class with a `price` field (private).
+    - Add a setter that throws if price < 0
+    - Add a getter that returns price with `"₹"` symbol
+
+2. Create a `Temperature` class with a private Celsius value
+    - Add getter for Fahrenheit conversion
+    - Add setter to update via Fahrenheit
+
