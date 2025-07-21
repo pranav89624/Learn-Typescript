@@ -789,3 +789,15 @@ class Counter {
    - Each role should have a `describe()` method
 
 3. Create a counter with observers that auto-log value changes
+
+---
+
+## 🔄 Final Recap
+
+You've now completed all the essential OOP concepts in TypeScript from classes and inheritance to powerful patterns used in real-world production code.
+
+Want to quickly revise what you've learned? Head over to the recap file below:
+
+👉 [Open OOP Recap](./recap.md) — Includes a full summary, self-check questions, and answers to reinforce everything before moving forward.
+
+> Next up: [Method Overloading](../05-method-overloading.ts) — Let’s dive deeper into TypeScript’s flexibility with class and function definitions.
