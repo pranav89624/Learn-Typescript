@@ -686,3 +686,67 @@ Then, import and use in `main.ts`.
 
 ---
 
+## 🔑 Section 9 - Index Signatures in TypeScript ([09-index-signatures.ts](./09-index-signatures.ts))
+
+### 🧠 What Are Index Signatures?
+
+Index signatures allow you to define the **structure of an object** where the key names are not known in advance — but you **know the type of keys and values**.
+
+---
+### 🧱 Syntax
+
+```ts
+interface ErrorBag {
+  [key: string]: string;
+}
+```
+> This means any number of properties, as long as the key is a string and the value is a string.
+
+### ✅ Use Case: Error Bag
+```ts
+const errorBag: ErrorBag = {
+  email: "Invalid email address",
+  username: "Must start with a letter",
+  123: "Even number keys become strings!",
+};
+```
+
+### ⚡ Why Use Index Signatures?
+1. **Dynamic Object Structures**: Useful when you don’t know all property names ahead of time
+2. **Flexible APIs**: Great for libraries or APIs that accept arbitrary key-value pairs
+3. **Type Safety**: Ensures that all values conform to a specific type
+
+### 🧭 When to Use
+- When dealing with unknown or dynamic keys
+- When keys come from user input or external sources (like APIs)
+- When you want to enforce uniform value types for all keys
+
+### 📌 Important Constraints
+- The key must be of type string, number, or symbol
+- All properties must match the index signature unless marked optional
+- You cannot mix index types (e.g. string and number) freely unless unioned carefully
+
+### 🔥 Bonus: Key Type Tricks
+
+```ts
+interface Scores {
+  [key: string]: number;
+  // fixed properties must also match value type of index
+  // name: string; ❌ Error - must be number
+}
+```
+To mix types, either use:
+- Record<string, any>
+- Or separate out fixed properties
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create an interface `Config` with `[key: string]: boolean`, then create a config object with 3 keys: `darkMode`, `showSidebar`, `enableLogging`.
+
+**Challenge 2:**
+
+Define an interface `GradeBook` where keys are student names and values are `number` scores. Write a function that takes a `GradeBook` and returns the class average.
+
+---

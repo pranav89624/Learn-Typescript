@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "strictNullChecks": true, // Enable strict null checks
+    "lib": ["ES2017", "DOM"], // Include ES2017 and DOM libraries
   },
   "include": ["src/**/*"]
 }
