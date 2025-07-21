@@ -750,3 +750,147 @@ Create an interface `Config` with `[key: string]: boolean`, then create a config
 Define an interface `GradeBook` where keys are student names and values are `number` scores. Write a function that takes a `GradeBook` and returns the class average.
 
 ---
+
+##  🧩 Section 10 - Optional & Readonly Properties in TypeScript ([10-optional-readonly-properties.ts](./10-optional-readonly.ts))
+
+
+### ❓ Optional Properties (`?`)
+
+Adding a `?` after a key name makes it **not required** when creating an object of that type.
+
+```ts
+interface User {
+  name: string;
+  age?: number; // optional
+}
+```
+
+### 🔍 Behavior
+- You can omit optional properties
+- If omitted, they are considered undefined
+- Still fully type-safe and autocomplete-aware
+
+### 🔐 Readonly Properties
+Use readonly to prevent mutation of a property after the object is created.
+
+```ts
+interface User {
+  readonly id: number;
+  name: string;
+}
+```
+
+### 🔍 Behavior
+- You must initialize readonly properties during creation
+- Any attempt to reassign them will throw a compile-time error
+- Great for enforcing immutable IDs, tokens, constants, etc.
+
+### 🔁 Combine Them
+You can use both on the same property:
+
+```ts
+interface Config {
+  readonly key?: string;
+}
+```
+> 🔸 A property like this is both optional and cannot be reassigned if provided.
+
+### ⚙️ Real-World Use Cases
+
+| Use Case                                 | Optional | Readonly |
+| ---------------------------------------- | -------- | -------- |
+| Optional settings or flags               | ✅        | ❌        |
+| API response fields (e.g., `avatarUrl?`) | ✅        | ❌        |
+| Constants, IDs, tokens                   | ❌        | ✅        |
+| Frontend state objects (`isLoading?`)    | ✅        | ❌        |
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create an interface `Product` with:
+- `id` (readonly number)
+- `name` (string)
+- `description?` (optional string)
+
+Create an object using this and try mutating `id`.
+
+**Challenge 2:**
+
+Create a `Settings` interface:
+- `theme?` (optional string)
+- `readonly version` (number)
+
+Create a settings object and try reassigning `version`.
+
+---
+
+## ⚔️ Section 11 - `unknown` vs `any` in TypeScript ([11-unknown-vs-any.ts](./11-unknown-vs-any.ts))
+
+
+### 🧠 What Is `any`?
+
+- The **escape hatch** for TypeScript’s type system  
+- Disables all type checking on that variable  
+- You can do *anything* with it without compiler errors  
+- **Dangerous**: can hide bugs, defeat purpose of TS
+
+```ts
+let value: any;
+value = 5;
+value.foo.bar(); // No error at compile time but runtime error likely
+```
+### 🧠 What Is `unknown`?
+
+- A type-safe counterpart to `any`
+- You can assign *anything* to `unknown`
+- But you cannot use it directly without type checking or assertion
+- Forces you to validate or narrow the type before usage
+
+```ts
+let value: unknown;
+value = 5;
+value.foo.bar(); // Error! You must narrow first
+```
+
+### ⚔️ Key Differences
+
+| Feature                | `any`                 | `unknown`                                 |
+| ---------------------- | --------------------- | ----------------------------------------- |
+| Assign anything to it  | ✅                     | ✅                                         |
+| Use properties/methods | ✅ (unsafe, no checks) | ❌ (requires narrowing)                    |
+| Assign to other types  | ✅                     | ❌ (only assignable to `any` or `unknown`) |
+| Type safety            | None                  | Enforced                                  |
+
+### 🔍 Working Safely with `unknown`
+
+Before using an `unknown` value, narrow its type using:
+- `typeof` checks
+- `instanceof` checks
+- User defined type guards
+- Type assertions (if you are sure)
+
+Example:
+```ts
+function process(value: unknown) {
+  if (typeof value === "string") {
+    console.log(value.toUpperCase());
+  } else {
+    console.log("Not a string");
+  }
+}
+```
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Write a function `printLength` that accepts an `unknown` argument and prints its length if it's a string or an array, otherwise logs "No length property".
+
+**Challenge 2:**
+Create a variable of type `any` and one of type `unknown`.<br>
+Try to call `.toFixed(2)` on both.<br >
+Explain why TypeScript behaves differently.
+
+---
+
