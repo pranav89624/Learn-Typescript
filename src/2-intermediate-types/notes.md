@@ -1032,3 +1032,16 @@ Merge two interface declarations `Car`, one with `make` and `model`, another wit
 **Challenge 2:**
 
 Create a function `counter` and merge it with a namespace that adds a static `reset` method.
+
+---
+
+## 🎯 Wrapping Up Intermediate Types
+
+You’ve covered a comprehensive set of essential TypeScript 
+concepts that form the backbone of real world application 
+development. This foundation will empower you to write 
+robust, maintainable, and scalable code with confidence.
+
+Before moving forward, take a moment to review the [Recap](./recap.md) to solidify your understanding and self assess your progress.
+
+---
