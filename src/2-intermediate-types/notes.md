@@ -433,7 +433,7 @@ Make a `ResponseHandler` class:
 
 --- 
 
-## 🔁 Section 5 - Function Overloading in TypeScript ([06-function-overloading.ts](./06-function-overloading.ts))
+## 🔁 Section 6 - Function Overloading in TypeScript ([06-function-overloading.ts](./06-function-overloading.ts))
 
 ### 🧠 What Is Function Overloading?
 
@@ -502,3 +502,187 @@ Create a function `describeUser()` that:
 - Uses overloads, not conditional types
 
 ---
+
+## 📦 Section 7 - Namespaces in TypeScript ([07-namespaces.ts](./07-namespaces.ts))
+
+### 🧠 What Is a Namespace?
+
+A **namespace** is a way to group related variables, functions, interfaces, or classes under a single **global scope-safe wrapper**.
+
+It helps **prevent naming collisions** in large codebases.
+
+---
+
+### 🧱 Basic Syntax
+
+```ts
+namespace Utilities {
+  export function log(msg: string) {
+    console.log("Log:", msg);
+  }
+}
+
+Utilities.log("Hello");
+```
+✅ Everything inside a namespace is not accessible unless it’s exported.
+
+### ⚡ Why Use Namespaces?
+1. **Organize Code**: Group related functionality together
+2. **Avoid Global Pollution**: Prevent naming conflicts in the global scope
+3. **Encapsulation**: Hide implementation details and expose only what’s necessary
+4. **Modularity**: Break code into smaller, manageable pieces
+
+### 🚫 Are Namespaces Still Used?
+
+Namespaces were more common in pre ES6 JavaScript.  
+
+With modern ES modules, they are less frequently used but still useful for organizing large codebases or legacy projects.
+
+Namespaces are older than ES Modules and mostly used in:
+
+- Legacy projects
+- Simple scripts without bundlers
+- Environments without module loaders (e.g. `<script>` in browser)
+
+In modern codebases, modules (import/export) are preferred.
+
+### 📌 Key Differences
+
+| Feature          | Namespaces                     | Modules (covered next)       |
+| ---------------- | ------------------------------ | ---------------------------- |
+| Scope            | Global via `namespace` keyword | File-based + `import/export` |
+| Usage            | Requires no module system      | Requires a module system     |
+| Maintainability  | Less scalable                  | Highly scalable              |
+| Compiler Support | ✅ Built-in in TS               | ✅ Built-in in TS             |
+
+
+### ⚠️ Important Notes
+
+- Namespaces must be in the same file unless using `/// <reference path="">`
+- You can nest namespaces but it’s rarely necessary
+- Avoid in modern projects unless required
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create a namespace `MathUtils` with:
+- A constant `PI`
+- A function `areaOfCircle(radius: number)`
+
+**Challenge 2:**
+
+Create a namespace `Auth` with:
+- Interface `User { name: string; password: string }`
+- Function `login(user: User): boolean`
+- Return `true` if name and password aren't empty
+
+---
+
+## 📦 Section 8 - ES Modules in TypeScript ([08-modules.ts](./08-modules.ts))
+
+### 🧠 What Are Modules?
+
+In TypeScript (and JavaScript), every `.ts` file is a **module** when it contains at least one `import` or `export`.
+
+Modules help you:
+
+- Avoid global scope pollution  
+- Reuse and organize logic  
+- Build scalable apps with clear file boundaries
+
+---
+
+### 🧱 Why Use Modules?
+
+✅ Organize code into reusable files  
+✅ Avoid naming collisions  
+✅ Build scalable codebases  
+✅ Encouraged in all modern apps, frontend & backend
+
+### ✍️ Syntax
+
+#### Named Exports (can export multiple things):
+
+```ts
+// file: utils.ts
+export const PI = 3.14;
+export function square(n: number): number {
+  return n * n;
+}
+```
+
+```ts
+// file: main.ts
+import { PI, square } from './utils';
+
+console.log(PI);          // 3.14
+console.log(square(5));   // 25
+```
+
+#### Default Exports (only one per file):
+
+```ts
+// file: greet.ts
+export default function greet(name: string) {
+  console.log(`Hello, ${name}`);
+}
+```
+
+```ts
+// file: main.ts
+import greet from './greet';
+
+greet("Pranav");
+```
+
+#### Re-exporting
+You can re-export from another module:
+
+```ts
+// file: index.ts
+export { PI, square } from './utils';
+```
+
+```ts
+// file: main.ts
+import { PI, square } from './index';
+
+console.log(PI);          // 3.14
+console.log(square(5));   // 25
+```
+
+### Rules to Remember
+1. **File as Module**: Each `.ts` file is a module if it has `import` or `export`.
+2. **Named Exports**: Use `export` to expose multiple items.
+3. **Default Export**: Use `export default` for a single main item.
+4. **Importing**: Use `import { item } from 'module'` for named exports, or `import item from 'module'` for default exports.
+5. **File Paths**: Use relative paths (`./`, `../`) to import from
+6. File extension is **not required** in imports
+
+### ⚠️ Important Notes
+- Modules are **not hoisted** like variables, so imports must be at the top.
+- Circular dependencies can cause issues, so avoid them.
+- Use `tsconfig.json` to set module resolution strategy (e.g., `commonjs`, `esnext`).
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create a file `math.ts` that exports:
+- A constant `PI`
+- A function `add(a, b)`
+- A function `multiply(a, b)`
+
+Then, import and use them in `main.ts`.
+
+**Challenge 2:**
+
+Create a file `user.ts` with:
+- An interface `User` with `name` and `age`
+- A function `describeUser(user: User): string`
+
+Then, import and use in `main.ts`.
+
+---
+
