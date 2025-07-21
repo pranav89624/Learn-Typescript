@@ -357,3 +357,148 @@ Each subpart will include real examples, code snippets, and mini challenges to s
 
 Ready to move like a real dev? Let’s get into the **heart of how TypeScript powers real-world architecture** jump into [`04-oop/`](./04-oop/) now. 💥
 
+---
+
+## 📌 Section 5 - Method Overloading in TypeScript ([05-method-overloading.ts](./05-method-overloading.ts))
+
+### 🧠 What Is Method Overloading?
+
+In TypeScript, **method overloading** allows you to define **multiple signatures** for a single method in a class.
+
+The actual method implementation comes after the overload signatures and it should handle all cases.
+
+---
+
+### 🧱 Syntax
+
+```ts
+class Printer {
+  print(message: string): void;
+  print(value: number): void;
+  print(arg: any): void {
+    console.log("Printing:", arg);
+  }
+}
+```
+> 🧨 Important: The implementation must be one method that handles all overloads using **type guards** or `any`.
+
+### ⚡ Why Use Method Overloading?
+1. **Cleaner APIs**: Define multiple ways to call a method without cluttering the interface
+2. **Type Safety**: Each overload can have its own type signature, ensuring correct usage
+3. **Flexibility**: Allows methods to handle different types of inputs gracefully
+4. You want one method to support multiple input types
+5. You’re designing flexible class **APIs**
+6. Avoid confusing method names like `printStr()`, `printNum()`
+
+### ✅ Real-world Use Case
+
+```ts
+class Logger {
+  log(msg: string): void;
+  log(error: Error): void;
+  log(data: string | Error): void {
+    if (typeof data === "string") {
+      console.log("Message:", data);
+    } else {
+      console.error("Error:", data.message);
+    }
+  }
+}
+```
+
+### 🧠 Key Rules Recap
+1. **Single Implementation**: Always have a single implementation that handles all overloads.
+2. **Type Guards**: Use type guards to differentiate between overloads in the implementation.
+3. **Clarity**: Ensure that the purpose of each overload is clear and distinct.
+4. **Avoid Complexity**: Don’t overload methods unnecessarily; keep the API simple.
+5. **Consistent Naming**: Use consistent naming conventions for overloaded methods.
+6. All overload signatures must be **defined above** the implementation.
+7. Implementation must **handle all** cases gracefully.
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create a class `Calculator` with an overloaded method `add()` that:
+
+- Adds two numbers: `add(10, 20)`
+- Concatenates two strings: `add("10", "20")`
+
+**Challenge 2:**
+
+Make a `ResponseHandler` class:
+
+- Overload method `handle` for `string`, `object`, and `null`
+- Log different messages based on input type
+
+--- 
+
+## 🔁 Section 5 - Function Overloading in TypeScript ([06-function-overloading.ts](./06-function-overloading.ts))
+
+### 🧠 What Is Function Overloading?
+
+Function overloading allows you to **define multiple call signatures** for a single function — enabling the same function to work with multiple types of arguments.
+
+Unlike method overloading (inside classes), function overloading is used with **standalone functions**.
+
+### 🧱 Syntax
+
+```ts
+function greet(name: string): void;
+function greet(age: number): void;
+function greet(input: any): void {
+  if (typeof input === "string") {
+    console.log(`Hello, ${input}`);
+  } else if (typeof input === "number") {
+    console.log(`You are ${input} years old`);
+  }
+}
+```
+> 🧨 The actual implementation must come after all signatures and must cover all possible types.
+
+### ⚡ Why Use Function Overloading?
+1. **Cleaner APIs**: Define multiple ways to call a function without cluttering the interface
+2. **Type Safety**: Each overload can have its own type signature, ensuring correct usage
+3. **Flexibility**: Allows functions to handle different types of inputs gracefully
+4. You want one function to support multiple input types
+5. Avoid confusing function names like `greetStr()`, `greetNum()`
+6. You’re designing flexible function **APIs**
+
+### ✅ Real-world Use Case
+- Utility functions (`parse()`, `format()`, `merge()`)
+- API clients (`fetch(url: string)` vs `fetch(options: object)`)
+- Logging, analytics, validation utilities
+
+### 🧠 Key Rules Recap
+1. **Single Implementation**: Always have a single implementation that handles all overloads.
+2. **Type Guards**: Use type guards to differentiate between overloads in the implementation.
+3. **Clarity**: Ensure that the purpose of each overload is clear and distinct.
+4. **Avoid Complexity**: Don’t overload functions unnecessarily; keep the API simple.
+6. All overload signatures must be **defined above** the implementation.
+
+### 🔗 Function Overloading vs Method Overloading
+
+| Feature       | Method Overloading                         | Function Overloading    |
+| ------------- | ------------------------------------------ | ----------------------- |
+| Scope         | Inside classes                             | Standalone functions    |
+| Use case      | Object behavior logic                      | Utility & helper logic  |
+| Usage pattern | `this` keyword access                      | Global functional logic |
+| Syntax rules  | Same: signatures above, one implementation |                         |
+
+### 🧪 Mini Challenges
+
+**Challenge 1:**
+
+Create a function `mergeValues()` that:
+- If passed two strings → returns concatenated string
+- If passed two numbers → returns their sum
+- If mixed types → throw an error
+
+**Challenge 2:**
+Create a function `describeUser()` that:
+
+- Takes a string (name) and returns `"User: {name}"`
+- Takes an object `{ name, age }` and returns `"User: {name}, Age: {age}"`
+- Uses overloads, not conditional types
+
+---
