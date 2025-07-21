@@ -894,3 +894,141 @@ Explain why TypeScript behaves differently.
 
 ---
 
+## 🧩 Section 12 - The `satisfies` Operator in TypeScript
+([12-satisfies-operator.ts](./12-satisfies-operator.ts))
+
+### 🧠 What Is `satisfies`?
+
+Introduced in TypeScript 4.9+, the `satisfies` operator checks that a value **conforms to a type**, but **without changing the inferred type** of the value.
+
+In simpler terms:
+
+- It **validates** the value against the target type  
+- But **preserves literal types and exact shape**  
+- Gives you better autocompletion and safer code without losing specifics
+
+---
+
+### ⚔️ `satisfies` vs `:` and `as`
+
+| Feature                     | `:` (Type Annotation)             | `as` (Type Assertion)             | `satisfies`                      |
+|-----------------------------|----------------------------------|----------------------------------|---------------------------------|
+| Changes inferred type       | Yes                              | Yes                              | No                              |
+| Validates against type      | No (trusts your annotation)      | No (forceful assertion)           | Yes (compile-time check)        |
+| Keeps literal types         | No                               | No                               | Yes                             |
+| Useful for narrowing types  | Limited                          | Limited                         | Yes                             |
+
+---
+
+### 🔍 Example
+
+```ts
+const colors = {
+  red: "#ff0000",
+  green: "#00ff00",
+  blue: "#0000ff",
+} satisfies Record<string, string>;
+```
+- Here, colors is validated to match Record<string, string>
+- But each property keeps its exact literal string type ("#ff0000" etc.)
+- If a property didn't satisfy string type, you'd get a compile-time error
+
+### 🧩 Why Use satisfies?
+
+- Avoids over-generalizing types, preserving literal types
+- Ensures your object meets the expected type interface
+- Helps catch errors early in large object literals
+- Great for configs, constants, and API response shapes
+
+### 🧪 Mini Challenges
+**Challenge 1:**
+
+Create a constant object `statusCodes` with keys as strings and values as numbers. Use `satisfies` to enforce the type but keep the exact values.
+
+**Challenge 2:**
+
+Write a typed config object with specific keys, ensuring it satisfies a given interface without losing literal types.
+
+---
+
+## 🧩 Section 13 - Declaration Merging in TypeScript ([13-declaration-merging.ts](./13-declaration-merging.ts))
+
+### 🧠 What Is Declaration Merging?
+
+Declaration Merging is when TypeScript automatically combines multiple declarations with the **same name** into a single definition.
+
+This only works for **certain constructs**:
+
+- `interface`  
+- `namespace`  
+- `function`  
+- `enum` (merges with namespaces)
+
+### 🔀 How It Works
+
+#### Interface Merging
+
+If you declare the same `interface` multiple times, TypeScript merges their members:
+
+```ts
+interface User {
+  name: string;
+}
+
+interface User {
+  age: number;
+}
+
+// Equivalent to:
+// interface User {
+//   name: string;
+//   age: number;
+// }
+```
+
+#### Namespace Merging
+Multiple `namespace` declarations with the same name get merged:
+
+```ts
+namespace MyNamespace {
+  export function foo() {}
+}
+
+namespace MyNamespace {
+  export function bar() {}
+}
+
+// You can use both functions as:
+// MyNamespace.foo();
+// MyNamespace.bar();
+```
+
+#### Function & Namespace Merging
+You can merge a function and a namespace with the same name to add static members:
+```ts
+function greet() {
+  console.log("Hello");
+}
+
+namespace greet {
+  export const language = "en";
+}
+
+greet(); // Hello
+console.log(greet.language); // "en"
+```
+
+### ⚠️ Important Notes & Gotchas
+- Merging only applies to declarations with the same name and kind or allowed pairs (function + namespace).
+- Merging can cause unexpected conflicts if not carefully managed.
+- Interfaces merge by combining properties — this is useful for extending third-party types or declaration files.
+- Be cautious about merged namespaces polluting global scope.
+
+### 🧪 Mini Challenges
+**Challenge 1:**
+
+Merge two interface declarations `Car`, one with `make` and `model`, another with `year`. Create an object satisfying the merged interface.
+
+**Challenge 2:**
+
+Create a function `counter` and merge it with a namespace that adds a static `reset` method.
