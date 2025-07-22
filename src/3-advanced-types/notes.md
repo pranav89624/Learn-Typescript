@@ -316,3 +316,159 @@ This is how TypeScript’s built in `NonNullable<>` works internally!
 1. Create a type `IsArray<T>` that checks if a type is an array.
 2. Create a type `Flatten<T>` that unwraps the array element if `T` is an array, otherwise returns `T` as is.
 3. Write a type `IsUnion<T>` that checks if a type is a union.
+
+---
+
+## Section 4 - The `infer` Keyword in TypeScript ([04-infer-keyword.ts](./04-infer-keyword.ts))
+
+### 🤔 What is `infer`?
+
+`infer` is used **within a conditional type** to **declare a new type variable** that can be **deduced** from another type.
+
+It lets you **"capture"** part of a type so you can work with it later — like pattern matching for types.
+
+---
+
+### 🔍 Basic Example
+
+```ts
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+type A = ReturnType<() => string>;  // string
+type B = ReturnType<() => number>;  // number
+```
+We’re saying:
+> “If T is a function, extract and return its return type as R. Otherwise, return never.”
+
+### 🔄 Extract Array Element Type
+
+```ts
+type ElementType<T> = T extends (infer U)[] ? U : T;
+
+type A = ElementType<string[]>; // string
+type B = ElementType<number>;   // number (unchanged)
+```
+
+### 🧠 Extract Function Parameters
+
+```ts
+type Params<T> = T extends (...args: infer P) => any ? P : never;
+
+type A = Params<(a: number, b: string) => void>; // [number, string]
+```
+
+### 🔧 Extract Object Property Type
+
+```ts
+type PropertyType<T> = T extends { prop: infer R } ? R : never;
+
+type A = PropertyType<{ prop: number }>;  // number
+type B = PropertyType<{}>;                // never
+```
+
+### 🧪 Mini Challenges
+1. Create a type `FirstArg<T>` that extracts the type of the first argument of a function.
+
+2. Create a type `PromiseResult<T>` that extracts the resolved type of a promise.
+
+3. Create a type `UnpackArray<T>` that recursively unwraps nested arrays (e.g., `string[][][] → string`).
+
+4. Create `RemoveReadonly<T>` that removes readonly modifiers from all properties of an object.
+
+---
+
+## Section 5 - Discriminated Unions ([05-discriminated-unions.ts](./05-discriminated-unions.ts))
+
+### 🤔 What are Discriminated Unions?
+Discriminated unions are a powerful way to model 
+**heterogeneous data** in TypeScript. They allow you to 
+define a type that can be one of several different shapes, 
+while still providing a way to **narrow down** the type 
+based on a common property.
+
+### 🧠 Why Use Discriminated Unions?
+Discriminated unions are essential for:
+- **Type Safety**: Ensures that operations on values are valid for their specific types.
+- **Clarity**: Makes your code more readable and maintainable by explicitly defining what types are being used.
+- **Error Prevention**: Catches potential runtime errors at compile time by ensuring type correctness.
+
+### 🚨 The Problem It Solves
+
+When you have a union of **object types**, TypeScript can’t always tell **which kind of object** you're working with unless there’s a **shared discriminant** field.
+
+Without it:
+```ts
+type Shape = { radius: number } | { side: number };
+
+function calcArea(shape: Shape) {
+  // ❌ Error — TS doesn't know what `shape` really is
+}
+```
+
+### ✅ The Fix, Add a "discriminant" field
+
+```ts
+type Circle = { kind: "circle"; radius: number };
+type Square = { kind: "square"; side: number };
+
+type Shape = Circle | Square;
+```
+Now you can use `shape.kind` as a **type-safe** switch:
+
+```ts
+function calcArea(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.side * shape.side;
+  }
+}
+```
+✅ TypeScript automatically narrows the type in each case.
+
+### 📦 Real-World Examples
+
+#### 👤 Auth State
+
+```ts
+type Auth =
+  | { status: "logged_in"; user: { id: string; email: string } }
+  | { status: "logged_out" };
+
+function render(auth: Auth) {
+  if (auth.status === "logged_in") {
+    console.log("Welcome", auth.user.email);
+  }
+}
+```
+
+#### 📮 Form State
+
+```ts
+type FormState =
+  | { stage: "idle" }
+  | { stage: "submitting" }
+  | { stage: "error"; message: string }
+  | { stage: "success"; id: string };
+```
+
+### 🛠 Best Practices
+- Always use a shared field like `type`, `kind`, `status`, or `stage`
+- Keep it a `string` literal (`"login"`, `"success"`), not `boolean` or random strings
+- Never name your tag something like `value`, `data`, etc., use unique, descriptive keys
+- Use `switch` statements or `if` checks to narrow down types
+
+### 🧪 Mini Challenges
+
+1. Create a union for 3 types of `Notification`:
+
+   - `"email"` with `to`, `subject`
+   - `"sms"` with `to`, `message`
+   - `"push"` with `deviceToken`, `title`, `body`
+
+2. Write a function `sendNotification(n: Notification)` that switches on `n.type` and logs relevant info.
+
+3. Add a default case in the `switch` that throws an error for exhaustive checking.
+
+---
