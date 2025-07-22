@@ -472,3 +472,282 @@ type FormState =
 3. Add a default case in the `switch` that throws an error for exhaustive checking.
 
 ---
+
+## Section 6 - Mapped Types in TypeScript ([06-mapped-types.ts](./06-mapped-types.ts))
+
+### 🤔 What are Mapped Types?
+Mapped types in TypeScript allow you to create new types by transforming the properties of an existing type, usually by iterating over its keys using `keyof` and `in`.
+
+They act like a `for...in` loop at the type level, enabling you to:
+- Add modifiers (e.g., `readonly`, `?`)
+- Replace value types
+- Filter or transform keys (when combined with `as` and conditional types)
+- Build reusable type utilities
+
+--- 
+
+```ts
+type User = {
+  name: string;
+  age: number;
+};
+
+// Make all properties optional:
+type OptionalUser = {
+  [K in keyof User]?: User[K];
+};
+```
+This is how `Partial<T>` works under the hood.
+
+### 🔁 Syntax Breakdown
+
+```ts
+type NewType = {
+  [K in keyof OldType]: TransformedValue;
+}
+```
+- `K` is a temporary name for each key
+- `keyof` gets all keys from the source type
+- `OldType[K]` grabs the value for each key
+
+### ⚒ Common Examples
+
+```ts
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K];
+};
+
+type Optional<T> = {
+  [K in keyof T]?: T[K];
+};
+
+type Nullable<T> = {
+  [K in keyof T]: T[K] | null;
+};
+```
+These are basically **TypeScript’s built-in** utils.    
+
+### 📦 Real Use Cases
+
+#### 🔒 Making all user fields readonly
+```ts
+type User = {
+  id: number;
+  email: string;
+};
+
+type ReadonlyUser = {
+  readonly [K in keyof User]: User[K];
+};
+```
+#### 🔍 API Error Tracking
+```ts
+type FormErrors<T> = {
+  [K in keyof T]?: string;
+};
+
+type LoginForm = {
+  email: string;
+  password: string;
+};
+
+type LoginErrors = FormErrors<LoginForm>;
+```
+Now you can track per-field error messages.
+
+### 🧠 Advanced Usage: Key Filtering (with conditional types)
+
+```ts
+type OnlyStringProps<T> = {
+  [K in keyof T as T[K] extends string ? K : never]: T[K];
+};
+```
+✅ Removes all keys whose value isn’t `string`.
+
+### 🧪 Mini Challenges
+1. Create a `DeepReadonly<T>` type that makes all properties and nested objects readonly.
+
+2. Create a `Flags<T>` type that transforms all boolean fields to a union:<br>
+`true | "pending" | false`
+
+3. Create a `Clone<T>` type that just duplicates an object — use mapped type for practice.
+
+---
+
+## Section 7 - Key Remapping in Mapped Types ([07-key-remapping.ts](./07-key-remapping.ts))
+
+### 🤔 What is Key Remapping?
+Key remapping allows you to **change the key names** when you're iterating over a type using a mapped type.
+
+It’s done using the `as` keyword *inside* the mapped type's key definition.
+
+```ts
+type Renamed<T> = {
+  [K in keyof T as `new_${string & K}`]: T[K];
+};
+```
+This remaps all keys to a new name prefixed with `"new_"`.
+
+### 🛠 Syntax Breakdown
+
+```ts
+type NewType = {
+  [K in keyof OldType as NewKey]: TransformedValue;
+};
+```
+- `K` is each key in `OldType`
+- `as NewKey` tells TypeScript what the new key should be
+- `TransformedValue` is the value (can be `OldType[K]`, or something else)
+
+### 📦 Real-World Examples
+#### 🧼 Strip Private Fields (filter out keys starting with _)
+```ts
+type PublicProps<T> = {
+  [K in keyof T as K extends `_${string}` ? never : K]: T[K];
+};
+```
+```ts
+type Person = {
+  name: string;
+  age: number;
+  _token: string;
+};
+
+type PublicPerson = PublicProps<Person>;
+// Result: { name: string; age: number }
+```
+
+#### 🆔 Rename All Keys with a Prefix
+
+```ts
+type Prefixed<T> = {
+  [K in keyof T as `db_${string & K}`]: T[K];
+};
+```
+Turns:
+```ts
+type Config = { host: string; port: number };
+```
+Into:
+```ts
+type DBConfig = { db_host: string; db_port: number };
+```
+
+### 📚 Use Cases
+
+| Scenario                                 | Key Remapping?     |
+| ---------------------------------------- | ------------------ |
+| Filtering out sensitive/private keys     | ✅                  |
+| Creating API DTOs with transformed names | ✅                  |
+| Renaming props for third-party libraries | ✅                  |
+| Custom `camelCase` / `snake_case` types  | ✅ (with templates) |
+
+### ⚠ Gotchas
+- Remapped keys must still be unique, or you’ll get duplicate key errors
+- never as key means “don’t include this key” (used for filtering)
+- Doesn’t work on runtime objects, purely type-level
+
+### 🧪 Mini Challenges
+1. Create a `Getters<T>` type that turns `{ name: string }` into `{ getName: () => string }`.
+
+2. Create a `RemoveFunctions<T>` type that removes all keys with function values.
+
+3. Create a `SnakeCaseProps<T>` that converts `userName` into `user_name`. (This is tricky, optional)
+
+---
+
+## Section 8 - Template Literal Types in TypeScript ([08-template-literal-types.ts](./08-template-literal-types.ts))
+
+### 🤔 What are Template Literal Types?
+Template literal types in TypeScript are a **type level feature** that lets you construct new string literal types 
+by combining other types using **string interpolation**, much like how JavaScript template strings work, but at the **type system level**.
+
+You can think of them as:
+> 💡 "Build new string based type keys using dynamic parts, variables, string unions, or transformations."
+
+```js
+const name = "Pranav";
+const msg = `Hello, ${name}`;
+```
+TypeScript allows **type-level string interpolation**:
+```ts
+type Greeting<T extends string> = `Hello, ${T}`;
+```
+So `Greeting<"Pranav">` becomes `"Hello, Pranav"`, as a type!
+
+### 🔁 Syntax
+
+```ts
+type NewType = `${Prefix}_${Suffix}`;
+```
+- You can interpolate other string types
+- Combine with `keyof`, `in`, `as`, `extends`, etc.
+
+### 🔧 Common Use Cases
+
+#### ✅ Key Generation
+
+```ts
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+```
+Turns:
+```ts
+type User = { name: string };
+```
+Into:
+```ts
+type Getters<User> = {
+  getName: () => string;
+}
+```
+
+### ✅ Prefixed or Suffix Keys
+```ts
+type Prefixed<T> = {
+  [K in keyof T as `api_${string & K}`]: T[K];
+};
+```
+You’ll often use this when transforming:
+- DTOs (Data Transfer Objects)
+- Form values
+- API response keys
+- Localization keys
+
+### 🧠 Type Helpers You Can Use
+TypeScript comes with **string utility types** to transform key names:
+
+| Helper            | Use Case                      |
+| ----------------- | ----------------------------- |
+| `Uppercase<T>`    | Convert `"hello"` → `"HELLO"` |
+| `Lowercase<T>`    | Convert `"HELLO"` → `"hello"` |
+| `Capitalize<T>`   | `"user"` → `"User"`           |
+| `Uncapitalize<T>` | `"User"` → `"user"`           |
+
+These can be used inside template literals:
+```ts
+type CapitalKeys<T> = {
+  [K in keyof T as Capitalize<string & K>]: T[K];
+};
+```
+
+### 📦 Real Project Use Cases
+| Use Case                                    | Template Literal Used? |
+| ------------------------------------------- | ---------------------- |
+| Dynamic form key generation                 | ✅ Yes                  |
+| Localization keys like `home.title`         | ✅ Yes                  |
+| Creating event listener keys like `onClick` | ✅ Yes                  |
+| API schema transformation                   | ✅ Yes                  |
+
+### ⚠ Gotchas
+- Template literal types are purely at type level they don’t impact runtime
+- You can't do dynamic string logic (like slicing or splitting) unless you pair it with conditional types
+- Ensure string values are `extends string`, or TS will complain
+
+### 🧪 Mini Challenges
+- Create a type `EventHandler<T>` that maps `{ click: MouseEvent }` to `{ onClick: (e: MouseEvent) => void }`.
+- Write a type `ApiRoutes<T>` that converts `{ user: "GET" }` into `{ "/api/user": "GET" }`.
+- Create a `RemovePrefix<T>` type that strips `api_` from all keys (hint: use conditional types).
+
+---
