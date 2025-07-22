@@ -37,9 +37,9 @@ If you're still shaky on the basics, complete `1-core-types/` first, this sectio
 
 Each sub-topic includes:
 
-1. `notes.md` – A focused explanation with real-world dev mindset  
+1. [`notes.md`](./notes.md) – A focused explanation with real-world dev mindset  
 2. `.ts` file(s) – Hands-on code examples and challenge solutions  
-3. Optional `recap.md` and `quiz-answer.md`, for active recall and revision
+3. Optional [`recap.md`](./recap.md) and [`quiz-answers.md`](./quiz-answers.md), for active recall and revision
 
 ---
 
