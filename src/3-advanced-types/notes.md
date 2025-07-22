@@ -751,3 +751,215 @@ type CapitalKeys<T> = {
 - Create a `RemovePrefix<T>` type that strips `api_` from all keys (hint: use conditional types).
 
 ---
+
+## Section 9 - Utility Types in TypeScript ([09-utility-types.ts](./09-utility-types.ts))
+
+### 🧩 What Are Utility Types?
+
+Utility types are **predefined helpers** that let you transform types in useful ways.
+
+Examples include:
+
+| Built-in        | Description                                     |
+|-----------------|-------------------------------------------------|
+| `Partial<T>`    | Makes all properties optional                   |
+| `Required<T>`   | Makes all properties required                   |
+| `Readonly<T>`   | Makes all properties readonly                   |
+| `Pick<T, K>`    | Select a subset of keys from `T`                |
+| `Omit<T, K>`    | Remove a subset of keys from `T`                |
+| `Record<K, V>`  | Create object with keys `K` of type `V`         |
+| `Exclude<T, U>` | Exclude types from union `T` that are assignable to `U` |
+| `Extract<T, U>` | Extract types from union `T` that are assignable to `U` |
+
+Now we’ll learn to write custom versions of these — and build our own.
+
+```ts
+type Partial<T> = {
+  [K in keyof T]?: T[K];
+};
+
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K];
+};
+
+type Pick<T, K extends keyof T> = {
+  [P in K]: T[P];
+};
+
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
+```
+
+### 🧠 Why Learn to Write Custom Utilities?
+
+Because in real-world projects:
+
+- You often need **slightly tweaked behavior** (e.g. deep partials, optional-only-some fields)
+- Understanding how they're built helps you **debug complex type errors**
+- You’ll see advanced utilities used in open-source and type-heavy libraries (like `zod`, `tRPC`, `react-hook-form`)
+
+### 🔧 How Utility Types Work Under the Hood
+
+They are built using:
+
+- **Mapped types**: `[K in keyof T]`
+- **Conditional types**: `T extends U ? X : Y`
+- **Template literals** (sometimes)
+- **Key filtering**: using `Exclude`, `Extract`, `infer`
+
+### ✨ Custom Examples
+
+1. `MyPartial<T>` — all keys optional  
+    ```ts
+    type MyPartial<T> = {
+    [K in keyof T]?: T[K];
+    };
+    ```
+2. `MyRequired<T>` — all keys required
+    ```ts
+    type MyRequired<T> = {
+    [K in keyof T]-?: T[K];
+    };
+    ```  
+3. `MyReadonly<T>` — readonly keys  
+    ```ts
+    type MyReadonly<T> = {
+    readonly [K in keyof T]: T[K];
+    };
+    ```
+4. `MyPick<T, K>` — select subset  
+    ```ts
+    type MyReadonly<T> = {
+    readonly [K in keyof T]: T[K];
+    };
+    ```
+5. `MyOmit<T, K>` — exclude subset  
+    ```ts
+    type MyOmit<T, K extends keyof any> = MyPick<T, Exclude<keyof T, K>>;
+    ```
+6. `MyRecord<K, V>` — object with keys `K` and values `V`  
+    ```ts
+    type MyRecord<K extends keyof any, V> = {
+    [P in K]: V;
+    };
+    ```
+7. `Mutable<T>` — revert `readonly` fields  
+    ```ts
+    type Mutable<T> = {
+    -readonly [K in keyof T]: T[K];
+    };
+    ```
+8. `Nullable<T>` — make all values nullable  
+    ```ts
+    type Nullable<T> = {
+    [K in keyof T]: T[K] | null;
+    };
+    ```
+9. `DeepPartial<T>` — recursively optional  
+    ```ts
+    type DeepPartial<T> = {
+    [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+    };
+    ```
+10. `SelectByType<T, U>` — keep only properties that match a type
+    ```ts
+    type SelectByType<T, U> = {
+    [K in keyof T as T[K] extends U ? K : never]: T[K];
+    };
+    ```
+    Example:
+    ```ts
+    type User = {
+    name: string;
+    age: number;
+    isActive: boolean;
+    };
+
+    type OnlyBooleans = SelectByType<User, boolean>; 
+    // { isActive: boolean }
+    ```
+### ⚠️ Gotchas
+
+- Utility types are **compile-time only** — no JS output
+- Type logic can get **nested and unreadable** — modularize when possible
+- Always test with real-world examples — not just theory
+
+### 🧪 Mini Challenges
+
+1. Create `NonFunctionProps<T>`, remove all function valued keys.
+2. Recreate `Exclude<T, U>` manually using conditional types.
+3. Make a `DeepReadonly<T>` utility.
+
+---
+
+## Section 10 - Type Level Functions ([10-type-level-functions.ts](./10-type-level-functions.ts))
+
+### 🤔 What Are Type-Level Functions?
+
+TypeScript doesn't have functions at the type level in the traditional sense.  
+Instead, **we simulate functions using types**, mostly through **conditional types**, **mapped types**, **infer**, and **recursion**.
+
+You can think of a type-level function as:
+
+> 💡 “A type that takes input types, performs logic, and returns another type.”
+
+They’re declarative and evaluated **only at compile time**.
+
+### 🧱 Core Tools for Type-Level Functions
+
+To build your own type-level functions, you’ll often use:
+
+| Concept             | Purpose                            |
+|---------------------|-------------------------------------|
+| `extends`           | Acts like an if-statement           |
+| `infer`             | Used to extract types dynamically   |
+| Mapped Types        | Iterate over properties             |
+| Recursive Types     | Repeat logic over nested types      |
+| Template Literals   | Build or transform string types     |
+
+### 🧠 Examples of Type-Level Functions
+
+#### 1. `First<T>` — Get first element of a tuple
+
+```ts
+type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never;
+```
+
+#### 2. `Length<T>` — Get length of a tuple
+
+```ts
+type Length<T extends any[]> = T["length"];
+```
+
+#### 3. `Reverse<T>` — Reverse a tuple (recursive)
+
+```ts
+type Reverse<T extends any[]> = 
+  T extends [infer F, ...infer R] 
+    ? [...Reverse<R>, F] 
+    : [];
+```
+
+#### 4. `ToArray<T>` — Wrap anything in an array
+
+```ts
+type ToArray<T> = T extends any ? T[] : never;
+```
+
+### Real-World Use Cases
+- Deep flattening or filtering of nested types
+- Dynamic schema validation (e.g. `zod`, `yup`, `tRPC`)
+- Building polymorphic component props
+- Enforcing patterns in API responses or form configs
+
+### 🚫 Gotchas
+- Debugging can be tricky, TypeScript's type system has limitations
+- Infinite recursion is possible, TypeScript will stop with a “type instantiation is excessively deep” error
+- Types are erased at runtime, so your logic must be type-safe, not value-driven
+
+### 🧪 Mini Challenges
+- Write `Last<T>`, return the last item of a tuple
+- Write `Push<T, U>`, add a new element `U` to the end of tuple `T`
+- Write `Includes<T, U>`, check if tuple `T` includes element `U`
+- Write `Flatten<T>`, flatten an array one level
+
+---
