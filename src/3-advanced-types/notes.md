@@ -963,3 +963,149 @@ type ToArray<T> = T extends any ? T[] : never;
 - Write `Flatten<T>`, flatten an array one level
 
 ---
+
+## Section 11 - Branded Types in TypeScript ([11-branded-types.ts](./11-branded-types.ts))
+
+### 🧠 What Are Branded Types?
+
+TypeScript uses **structural typing** by default, if it looks like a duck, it’s a duck.
+
+> 💡 That means two objects or strings with the same shape are treated as the same, even if they’re not.
+
+But in many real world apps, **just knowing the structure is not enough.**  
+You may want a `UserID` and `ProductID` to both be strings, but not interchangeable.
+
+This is where **branded types** (also called **nominal typing**) come in.
+
+---
+
+### 🔖 Example
+
+```ts
+type UserID = string & { __brand: "UserID" };
+type ProductID = string & { __brand: "ProductID" };
+
+const userId = "u123" as UserID;
+const productId = "p456" as ProductID;
+
+// userId = productId ❌ Error (thanks to branding!)
+```
+🛡️ The extra `{ __brand: string }` part doesn't affect runtime, it's purely for type safety.
+
+### 🔐 Why Use Branded Types?
+
+| Use Case                      | Why Branding Helps                        |
+| ----------------------------- | ----------------------------------------- |
+| Unique identifiers (IDs)      | Prevents mixing up different ID types     |
+| Domain models (Email, Amount) | Adds semantic meaning to base types       |
+| Unit safety (`KM` vs `Miles`) | Prevents logical bugs in calculations     |
+| Form validation               | Enforces that only validated data is used |
+
+### 🧩 Key Concepts
+
+#### ✅ 1. Branding a Primitive Type
+
+```ts
+type Email = string & { __brand: "Email" };
+
+function createEmail(raw: string): Email {
+  // Validation logic can go here
+  return raw as Email;
+}
+```
+#### ✅ 2. Ensuring Branded Types Are Created Safely
+Create branded types only through factory functions, don’t let users cast manually.
+
+### ⚠️ Gotchas
+- Branded types **vanish at runtime**, they are erased during compilation
+- Don’t overuse, stick to primitives where structural typing is unsafe
+- Can be faked by developers who use as directly, rely on linting and discipline
+
+### 🧪 Mini Challenges
+1. Create a `Currency` branded type that only allows values through a formatter.
+2. Create a `ValidPassword` branded type after validation.
+3. Try passing a raw string into a function expecting a branded type, observe the error.
+
+---
+
+## Section 12 - Recursive Types in TypeScript ([12-recursive-types.ts](./12-recursive-types.ts))
+
+### 🔁 What Are Recursive Types?
+
+Recursive types are types that **refer to themselves**, just like recursive functions, but at the **type level**.
+
+They are used to model data that is **nested or hierarchical** in nature.
+
+> 💡 In simpler terms: you define a type in terms of itself.
+
+---
+
+### 🧠 When Are They Useful?
+
+- Nested arrays or objects (e.g. folders inside folders)
+- Trees (e.g. menu trees, file systems, DOM nodes)
+- JSON structures of arbitrary depth
+- Building utilities like `DeepPartial`, `Flatten`, `NestedKeys`
+
+### 🧱 Basic Example: Tree Node
+
+```ts
+type TreeNode = {
+  value: string;
+  children?: TreeNode[]; // refers to itself
+};
+```
+
+This models any tree like structure with nodes containing nested nodes.
+
+### 🧱 Nested Object Example
+
+```ts
+type NestedObject = {
+  [key: string]: string | NestedObject;
+};
+```
+You can now store deeply nested key-value pairs of strings or objects.
+
+### 🔨 Advanced Use Case: DeepPartial
+Make a utility where every nested property becomes optional.
+
+```ts
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object
+    ? DeepPartial<T[K]>
+    : T[K];
+};
+```
+Use it to allow updates on deeply nested object trees:
+```ts
+type Config = {
+  db: {
+    host: string;
+    port: number;
+  };
+};
+
+const partial: DeepPartial<Config> = {
+  db: {
+    port: 5432,
+  },
+};
+```
+
+### ⚠️ Limitations & Gotchas
+- 🧠 Recursive types can easily hit TypeScript's recursion depth limit
+
+- Runtime operations (like serialization) still require manual logic
+
+- Beware of infinite recursion, TypeScript may error out with:
+> Type instantiation is excessively deep and possibly infinite
+
+🔐 **Rule of thumb**: Keep recursion shallow and focused.
+
+### 🧪 Mini Challenges
+1. Create a recursive type for a nested comment thread
+2. Create a recursive `Flatten<T>` type to flatten any array
+3. Create a `NestedArray<T>` type that can be infinitely nested
+
+---
