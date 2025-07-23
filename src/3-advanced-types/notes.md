@@ -1109,3 +1109,24 @@ const partial: DeepPartial<Config> = {
 3. Create a `NestedArray<T>` type that can be infinitely nested
 
 ---
+
+## 🔚 That’s a Wrap for This Section!
+
+Congratulations! You've just completed the **Advanced Types** section packed with:
+
+- Deep dives into type transformations
+- Real-world use of recursive types
+- Safety-first design patterns (branding, narrowing, etc.)
+- Type-level programming patterns most devs never touch
+
+You’re now equipped to write powerful, type-safe, production grade TypeScript code.
+
+---
+
+### 🔁 What’s Next?
+
+> 📘 Head over to the **[recap.md](./recap.md)** to:
+> - Review all major concepts from this section
+> - Solve self-check questions
+> - Revisit mini challenges
+> - Lock in your learning before moving on
