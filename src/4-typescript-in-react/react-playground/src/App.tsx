@@ -1,4 +1,5 @@
 import Layout from "./components/Layout";
+import { PropsAndStateDemo } from "./concepts/01-props-and-state";
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
           experiment, and learn in style.
         </p>
       </div>
+
+      <PropsAndStateDemo />
     </Layout>
   );
 }
