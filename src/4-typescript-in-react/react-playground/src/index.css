@@ -1,1 +1,22 @@
 @import "tailwindcss";
+/* @tailwind utilities; */
+
+/* ===== Brand Styling Utilities ===== */
+
+/* Custom container */
+.container {
+  @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Brand Typography */
+.brand-heading {
+  @apply text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white;
+}
+
+.brand-subheading {
+  @apply text-lg sm:text-xl font-medium text-neutral-600 dark:text-neutral-300;
+}
+
+.brand-paragraph {
+  @apply text-base sm:text-lg leading-relaxed text-neutral-700 dark:text-neutral-300;
+}
