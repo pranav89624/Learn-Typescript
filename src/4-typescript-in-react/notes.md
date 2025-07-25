@@ -439,3 +439,63 @@ By now, you should:
 - Feel confident handling hooks like a **senior developer**
 
 ---
+
+## 🧩 Section 4 - Context API ([`04-context-api`](./react-playground/src/concepts/04-context-api/))
+
+In this section, we're going beyond prop drilling. With the **Context API**, we can share state across the component tree,
+and when paired with TypeScript, it becomes a robust, type-safe pattern for building scalable applications.
+
+No more guessing what a context provides. TypeScript ensures you always get the right value, the right shape, at the right time.
+
+---
+
+### 🚀 What You’ll Learn
+By the end of this section, you'll be able to:
+- Create a **typed context object** (no more `undefined as any`)
+- Define and enforce the structure of context values
+- Provide and consume context with full **IntelliSense**
+- Avoid pitfalls like undefined context values and misuse of the provider
+
+### 🧱 Core Concepts Covered
+
+#### 1. Creating a Typed Context Object
+Using `React.createContext`, we define the structure of our context using interfaces or type aliases, ensuring that consumers of the context know *exactly* what they're getting.
+
+```tsx
+type ThemeContextType = {
+  darkMode: boolean;
+  toggleTheme: () => void;
+};
+
+const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
+```
+> 🔍 We set `undefined` as default to force usage inside a `<Provider>`.
+
+#### 2. Typing the Provider Props
+Context Providers wrap children and inject values. TypeScript ensures the correct types flow through the tree.
+
+```tsx
+type ThemeProviderProps = {
+  children: React.ReactNode;
+};
+```
+
+#### 3. Consuming the Context
+When using `useContext`, we check for `undefined` (in case someone forgets the provider) and provide typed access.
+
+```tsx
+const useTheme = (): ThemeContextType => {
+  const context = React.useContext(ThemeContext);
+  if (!context) throw new Error("useTheme must be used within ThemeProvider");
+  return context;
+};
+```
+> ✅ Pro tip: Always wrap context in a custom hook to encapsulate the error check and avoid duplication.
+
+### ⚠️ Gotchas & Best Practices
+- ❌ Don't skip the `undefined` check in consumers
+- ✅ Use union types when your context has multiple possible states
+- ✅ Always provide a default value in the context creation
+- ✅ Use custom hooks to encapsulate context logic and avoid repetitive code
+
+---
