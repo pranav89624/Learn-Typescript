@@ -499,3 +499,86 @@ const useTheme = (): ThemeContextType => {
 - ✅ Use custom hooks to encapsulate context logic and avoid repetitive code
 
 ---
+
+## 🧩 Section 5 - Custom Hooks & Generics ([`05-custom-hooks-generics`](./react-playground/src/concepts/05-custom-hooks-generics/))
+
+Custom hooks are one of the best parts of React, but they shine even brighter when used with **TypeScript generics**. This section will show you how to build **reusable, type-safe, and fully inferable** hooks that scale to real world apps and APIs.
+
+### 🚀 Why This Matters
+Custom hooks let you extract logic but what if the **type of the data isn’t always the same?** That’s where **generics** come in.
+With generics, your hook becomes a *template*, adjusting its internal typing based on how you use it, without ever losing IntelliSense or safety.
+
+This section teaches you how to:
+
+- Write generic custom hooks like `useFetch<T>()`
+- Infer return types based on API usage
+- Type errors, loading states, and data precisely
+- Handle DOM or third-party library integrations inside custom hooks
+
+### 🧠 Core Concepts
+
+#### ✅ 1. Generic Hook Signatures
+Use a generic `<T>` to make your hook reusable across different data types:
+```tsx
+function useFetch<T>(url: string): UseFetchState<T>
+```
+This tells TypeScript:<br>
+"Whoever calls this hook will **specify the type of the data** (T), and all internal typing will reflect that."
+
+#### ✅ 2. Hook Return Type
+Define a clear return shape, preferably as a type:
+```tsx
+type UseFetchState<T> = {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+};
+```
+This way you always return a **consistent object**, regardless of what `T` is.
+
+#### ✅ 3. How to Consume the Hook
+Let’s say we’re fetching an array of `User` objects:
+
+```tsx
+type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+const { data, loading, error } = useFetch<User[]>("https://api.com/users");
+```
+- Now `data` is fully typed as `User[]`
+- Autocomplete works perfectly inside `.map()`
+- Errors are strings (type-safe), loading is boolean
+
+#### ✅ 4. Preventing Race Conditions
+When using `fetch()` or async calls in `useEffect`, clean up side effects to prevent state updates after unmount:
+
+```tsx
+let isMounted = true;
+// ...
+return () => { isMounted = false }
+```
+
+#### ✅ 5. Error Boundaries & Runtime Guards
+While this hook returns errors as strings, in more robust systems you might:
+- Return `Error` objects
+- Add a status `enum: 'idle' | 'loading' | 'success' | 'error'`
+- Include metadata (status codes, retry count, etc.)
+
+Keep the hook flexible—but type-controlled.
+
+### 📦 When to Use This Pattern
+- Reusable API logic (`useFetch`, `usePost`, `usePagination`)
+- Working with 3rd-party libraries (`useSWR<T>()`, `useQuery<T>()`)
+- DOM measurement or interactions (`useDimensions<T extends HTMLElement>()`)
+- Custom form logic (`useForm<T>()`)
+
+### 🎯 Goal Recap
+By mastering generics with hooks, you now have the power to:
+- Write safe, composable, reusable data logic
+- Avoid repeating type logic everywhere
+- Leverage TypeScript for better DX (Developer Experience)
+
+---
