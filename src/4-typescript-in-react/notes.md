@@ -299,3 +299,143 @@ After completing this section, you should be confident in:
 - Writing cleaner, more robust, and bug-resistant input forms
 
 ---
+
+## 🧩 Section 3 - Hooks and Refs ([`03-hooks-and-refs`](./react-playground/src/concepts/03-hooks-and-refs/))
+
+React hooks like `useRef`, `useEffect`, and `useReducer` are the backbone of clean, reactive, and performant components.
+
+This section isn’t just about “how” to use these hooks—it’s about how to use them **with full type safety**, confidence, and no weird `any` or casting hacks.
+
+### 🎯 What You'll Learn
+
+- Properly typing `useRef()` for **DOM elements** and **mutable values**
+- How to write **type-safe dependencies** inside `useEffect`
+- Typing complex `useReducer` logic with **discriminated union patterns**
+
+### 📌 Typing `useRef`
+
+There are 2 main use cases for `useRef`:
+
+#### 1. Referencing a DOM Element
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+useEffect(() => {
+  inputRef.current?.focus();
+}, []);
+```
+💡 **Why type it?** So you get safe `.focus()`, `.value`, `.blur()`, etc., without casting.
+
+#### 2. Storing Mutable Values (like instance variables)
+```tsx
+const countRef = useRef<number>(0); // Mutable, but doesn't trigger rerenders
+
+useEffect(() => {
+  countRef.current += 1;
+}, []);
+```
+This is useful for tracking state **outside the render cycle**.
+
+### 📌 Typing `useEffect`
+
+`useEffect` doesn't need special typing, but the **dependencies** must be accurately referenced to avoid stale closures, re-renders and bugs.
+
+```tsx
+useEffect(() => {
+  const handle = (value: number) => {
+    console.log(value);
+  };
+
+  handle(countRef.current);
+}, []);
+```
+💡 Don’t ignore lint warnings about dependencies, they’re almost always right.
+
+### 📌 Typing `useReducer`
+`useReducer` is ideal for managing complex state transitions, especially when:
+- You have multiple related state fields
+- State updates depend on current state
+- You want explicit control flow via actions
+
+```tsx
+type State = {
+  count: number;
+  loading: boolean;
+};
+
+type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'setLoading'; payload: boolean };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment':
+      return { ...state, count: state.count + 1 };
+    case 'decrement':
+      return { ...state, count: state.count - 1 };
+    case 'setLoading':
+      return { ...state, loading: action.payload };
+    default:
+      return state;
+  }
+}
+```
+```tsx
+const [state, dispatch] = useReducer(reducer, {
+  count: 0,
+  loading: false,
+});
+```
+💡 Each action is strictly typed and TypeScript narrows the type inside `switch` no `if (action.type === ...) && action.payload && typeof payload === ...` needed!
+
+### 🧪 Real-World Hook Examples
+
+#### ✅ useRef with `video`, `form`, `canvas`
+```tsx
+const canvasRef = useRef<HTMLCanvasElement>(null);
+```
+
+#### ✅ useEffect fetching logic
+```tsx
+useEffect(() => {
+  let isMounted = true;
+  fetchData().then((data) => {
+    if (isMounted) setData(data);
+  });
+  return () => {
+    isMounted = false;
+  };
+}, []);
+```
+
+#### ✅ useReducer for form state
+```tsx
+type FormState = { name: string; email: string };
+type FormAction = { type: 'update'; field: keyof FormState; value: string };
+
+const formReducer = (state: FormState, action: FormAction): FormState => {
+  switch (action.type) {
+    case 'update':
+      return { ...state, [action.field]: action.value };
+    default:
+      return state;
+  }
+};
+```
+
+### Summary
+| Hook         | Type Strategy                      | When to Use                            |
+| ------------ | ---------------------------------- | -------------------------------------- |
+| `useRef`     | `<HTMLInputElement>` or `<number>` | Access DOM or store mutable values     |
+| `useEffect`  | Use correct dependencies           | Side effects and cleanup logic         |
+| `useReducer` | Discriminated unions for actions   | Complex state management & transitions |
+
+### Learning Outcomes
+By now, you should:
+- Know when to use `useRef`, `useEffect`, and `useReducer`
+- Be able to fully type them, DOM refs, dependencies, state transitions
+- Feel confident handling hooks like a **senior developer**
+
+---

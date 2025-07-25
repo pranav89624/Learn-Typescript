@@ -6,6 +6,8 @@ import InputRefUsage from './04-InputRefUsage';
 const EventHandlingAndForms = () => {
   return (
     <div className="space-y-10 p-6">
+      <h1 className="text-2xl font-bold">Event Handling and Forms</h1>
+
       {/* 👉 Click Event Demo */}
       <section>
         <h2 className="text-xl font-semibold mb-2">🔘 Button Click (onClick)</h2>

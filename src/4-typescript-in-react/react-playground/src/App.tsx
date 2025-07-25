@@ -1,6 +1,7 @@
 import Layout from "./components/Layout";
-// import { PropsAndStateDemo } from "./concepts/01-props-and-state";
+import { PropsAndStateDemo } from "./concepts/01-props-and-state";
 import EventHandlingAndForms from "./concepts/02-events-and-forms";
+import HooksAndRefs from "./concepts/03-hooks-and-refs";
 
 function App() {
   return (
@@ -15,8 +16,9 @@ function App() {
         </p>
       </div>
 
-      {/* <PropsAndStateDemo /> */}
+      <PropsAndStateDemo />
       <EventHandlingAndForms />
+      <HooksAndRefs />
     </Layout>
   );
 }
