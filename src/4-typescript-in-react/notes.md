@@ -202,3 +202,100 @@ export const PropsAndStateDemo: React.FC = () => {
 - You are familiar with union types and how they can be used to model different states or variations of props.
 
 ---
+
+## 🔁 Section 2 - Event Handling & Form Types in TypeScript + React ([`02-events-and-forms`](./react-playground/src/concepts/02-events-and-forms/))
+
+Handling events in React is straightforward, but when you add **TypeScript**, you unlock **precise safety, better autocomplete, and more maintainable code**.
+
+This section focuses on **typing event handlers and form elements**, ensuring you never again second guess what `event.target.value` is supposed to be.
+
+---
+
+### 🎯 Key Concepts You’ll Learn
+
+- How to **type common event handlers** like `onClick`, `onChange`, and `onSubmit`
+- Difference between **React's SyntheticEvent** vs **native DOM events**
+- How to **type-safe form inputs** using `event.target.value`
+- Using `useRef` with proper DOM element types
+
+### 🧠 SyntheticEvent vs Native Event
+
+In React, all events are wrapped in a `SyntheticEvent`, which normalizes behavior across browsers. You almost never need to use the native DOM event directly.
+
+```ts
+(e: React.MouseEvent<HTMLButtonElement>) => { ... } // ✅ Best practice
+```
+Want the native DOM event? Access it via `e.nativeEvent`.
+
+### 📌 Common Event Types & Their Signatures
+
+| Event Type | DOM Target Type                         | Signature Example                     |
+| ---------- | --------------------------------------- | ------------------------------------- |
+| `onClick`  | `HTMLButtonElement`, etc.               | `React.MouseEvent<HTMLButtonElement>` |
+| `onChange` | `HTMLInputElement`, `HTMLSelectElement` | `React.ChangeEvent<HTMLInputElement>` |
+| `onSubmit` | `HTMLFormElement`                       | `React.FormEvent<HTMLFormElement>`    |
+| `onFocus`  | `HTMLInputElement`, etc.                | `React.FocusEvent<HTMLInputElement>`  |
+
+### 🧪 Input Value Typing
+```tsx
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const val = e.target.value; // value is typed as string automatically ✅
+}
+```
+This ensures `e.target` has all the properties expected of an `<input>`, like `.value`, `.checked`, etc.
+
+### 🛠 Typing Refs to DOM Elements
+When using `useRef` to interact with DOM elements (e.g., focusing an input), always pass the correct HTML element type:
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+```
+Using this typing lets you safely call methods like i`nputRef.current?.focus()` without `any` type errors.
+
+### 🧩 Real-World Scenarios Covered in This Section
+
+#### ✅ 1. Button Click (onClick)
+Use `MouseEvent` when handling click events on buttons or other elements.
+
+```tsx
+const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  console.log(e.currentTarget); // Button Element
+};
+```
+
+#### ✅ 2. Input Change (onChange)
+Input fields emit `ChangeEvent`. Proper typing ensures `.value` is available without casting.
+
+```tsx
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setValue(e.target.value);
+};
+```
+
+#### ✅ 3. Form Submission (onSubmit)
+Use `FormEvent` on forms, and don't forget to call `e.preventDefault()`.
+
+```tsx
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+};
+```
+
+#### ✅ 4. Input with useRef
+Use `useRef<HTMLInputElement>` to access DOM methods like `.focus()`.
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+const handleFocus = () => {
+  inputRef.current?.focus();
+};
+```
+
+### 🎯 Learning Outcome
+After completing this section, you should be confident in:
+- Typing all major form and UI interactions
+- Eliminating any `any` and casting from your event handlers
+- Writing cleaner, more robust, and bug-resistant input forms
+
+---

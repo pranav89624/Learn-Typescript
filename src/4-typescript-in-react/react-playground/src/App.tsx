@@ -1,5 +1,6 @@
 import Layout from "./components/Layout";
-import { PropsAndStateDemo } from "./concepts/01-props-and-state";
+// import { PropsAndStateDemo } from "./concepts/01-props-and-state";
+import EventHandlingAndForms from "./concepts/02-events-and-forms";
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
         </p>
       </div>
 
-      <PropsAndStateDemo />
+      {/* <PropsAndStateDemo /> */}
+      <EventHandlingAndForms />
     </Layout>
   );
 }
