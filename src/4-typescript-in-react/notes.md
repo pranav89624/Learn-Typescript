@@ -800,3 +800,75 @@ const [state, setState] = useState<FetchState<User[]>>({
 Then you can update this state cleanly after fetching.
 
 ---
+
+## Section 8 - Practical UI Types ([`08-practical-ui-types`](./react-playground/src/concepts/08-practical-ui-types/))
+
+In this section, we’ll apply everything you’ve learned to build practical, real-world UI components with TypeScript. We’ll cover how to type complex UIs, handle user interactions, and ensure your components are both flexible and type-safe.
+
+### 🚀 What You’ll Learn
+By the end of this section, you'll be able to:
+- Use utility types like `Record`, `Partial`, `Pick`, and `Omit` in actual components
+- Build *themeable*, *customizable*, and *context aware* UIs with mapped types
+- Leverage discriminated unions for conditionally rendered tabs, dropdowns, modals, etc.
+
+### 🧱 Core Concepts
+#### 🔹 `Record<K, V>`
+Creates an object type with keys of type `K` and values of type `V`.
+```tsx
+type Theme = "light" | "dark" | "system";
+const themes: Record<Theme, string> = {
+  light: "Light 🌞",
+  dark: "Dark 🌙",
+  system: "System 🖥️",
+};
+```
+📌 Use case: Theme switchers, icon maps, layout descriptions.
+
+#### 🔹 `Partial<T>`
+Turns all properties of a type into optional.
+```tsx
+type User = { name: string; age: number; email: string };
+type DraftUser = Partial<User>;
+```
+📌 Use case: Drafting forms where not all fields are filled.
+
+#### 🔹 `Pick<T, K>` and `Omit<T, K>`
+Create subtypes by selecting or excluding keys.
+```tsx
+type User = { id: number; name: string; password: string };
+type PublicUser = Omit<User, "password">;
+``` 
+📌 Use case: Secure data access and API view layers.
+
+#### 🔹 Discriminated Unions in UI
+Create components that behave differently based on a shared `type` property.
+```tsx
+type Tab = 
+  | { type: "home"; label: string }
+  | { type: "settings"; label: string };
+
+function render(tab: Tab) {
+  if (tab.type === "home") return <Home />;
+  else if (tab.type === "settings") return <Settings />;
+}
+```
+📌 Use case: Tabs, dropdowns, notifications with unique behavior.
+
+### 🧪 Real-World Patterns
+#### 🧩 TabSwitcher
+Uses a discriminated union to ensure type-safe content switching without `if`/`else` bugs or `undefined`.
+
+#### 🎨 ThemeSwitcher
+Uses a `Record<Theme, Label>` for mapping values cleanly.
+
+#### 📐 LayoutCard
+Injects layout type and dynamically maps descriptions using `Record`.
+
+### ✅ Why This Matters
+These patterns:
+- Prevent common UI bugs ("undefined is not a function" becomes a thing of the past)
+- Make your components *predictable* and *document themselves* via types
+- Let you scale: more layouts? Add a key. More themes? Expand the type.
+
+---
+

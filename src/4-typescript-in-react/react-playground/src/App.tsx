@@ -5,7 +5,8 @@ import Layout from "./components/Layout";
 // import ContextApiExample from "./concepts/04-context-api";
 // import CustomHooksExample from "./concepts/05-custom-hooks-generics";
 // import ComponentCompositionExamples from "./concepts/06-component-composition";
-import TypingExternalData from "./concepts/07-typing-external-data";
+// import TypingExternalData from "./concepts/07-typing-external-data";
+import PracticalUI from "./concepts/08-practical-ui-types";
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
       {/* <ContextApiExample /> */}
       {/* <CustomHooksExample /> */}
       {/* <ComponentCompositionExamples /> */}
-      <TypingExternalData />
+      {/* <TypingExternalData /> */}
+      <PracticalUI />
     </Layout>
   );
 }
