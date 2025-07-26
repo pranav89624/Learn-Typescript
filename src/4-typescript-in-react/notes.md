@@ -872,3 +872,6 @@ These patterns:
 
 ---
 
+### 🔄 Next Step: Quick Recap
+To reinforce everything you've learned, head over to the [`recap.md`](./recap.md) file in this section. 
+It's a condensed review of all the key concepts, patterns, and gotchas, perfect for interview prep, revision, or sharing with fellow devs.
