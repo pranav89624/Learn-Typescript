@@ -4,7 +4,8 @@ import Layout from "./components/Layout";
 // import HooksAndRefs from "./concepts/03-hooks-and-refs";
 // import ContextApiExample from "./concepts/04-context-api";
 // import CustomHooksExample from "./concepts/05-custom-hooks-generics";
-import ComponentCompositionExamples from "./concepts/06-component-composition";
+// import ComponentCompositionExamples from "./concepts/06-component-composition";
+import TypingExternalData from "./concepts/07-typing-external-data";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
       {/* <HooksAndRefs /> */}
       {/* <ContextApiExample /> */}
       {/* <CustomHooksExample /> */}
-      <ComponentCompositionExamples />
+      {/* <ComponentCompositionExamples /> */}
+      <TypingExternalData />
     </Layout>
   );
 }

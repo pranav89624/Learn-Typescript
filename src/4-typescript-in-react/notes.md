@@ -702,3 +702,101 @@ By the end of this section, you should:
 ✅ Compose UI like a senior engineer <br>
 
 ---
+
+## Section 7 - Typing External Data ([`07-typing-external-data`](./react-playground/src/concepts/07-typing-external-data/))
+
+Working with external data is inevitable in modern web development. Whether you're fetching from a REST API, GraphQL, or even loading local JSON files, getting your TypeScript types right can be the difference between smooth sailing and hours of debugging `"undefined is not a function"` errors.
+
+This section will walk you through how to **safely fetch, transform, and use external data** in your React components with full TypeScript support.
+
+---
+
+### 🚀 What You’ll Learn
+By the end of this section, you’ll know how to:
+- Create and use **type-safe fetch calls** with `fetch` and `axios`
+- Guard against `undefined`, `null`, or partial response values
+- Work confidently with loading, error, and success states
+
+### 📦 Key Concepts
+
+#### 1. Typing Fetch Responses (with fetch)
+```tsx
+type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+const fetchUsers = async (): Promise<User[]> => {
+  const res = await fetch("/api/users");
+  if (!res.ok) throw new Error("Failed to fetch users");
+  const data: User[] = await res.json();
+  return data;
+};
+```
+Always annotate the `Promise` return type to ensure data is parsed and used safely.
+
+#### 2. Typing with Axios
+Axios can infer types directly from the generic `<T>` you provide.
+
+```tsx
+import axios from "axios";
+
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+const getTodos = async (): Promise<Todo[]> => {
+  const { data } = await axios.get<Todo[]>("https://jsonplaceholder.typicode.com/todos");
+  return data;
+};
+```
+> ✅ Axios automatically infers the response type, so you get full IntelliSense and type safety.
+
+#### 3. Partial and Optional Data
+Sometimes APIs don’t return all fields. Don’t lie to TypeScript.
+```tsx
+interface Product {
+  id: number;
+  name: string;
+  description?: string; // optional
+}
+```
+If you’re uncertain about structure, use `Partial<T>`:
+```tsx
+const partialProduct: Partial<Product> = { id: 123 };
+```
+
+#### 4. Safe Data Handling
+
+```tsx
+const [user, setUser] = useState<User | null>(null);
+
+useEffect(() => {
+  fetchUser().then(setUser);
+}, []);
+
+if (!user) return <p>Loading...</p>;
+
+// Now safe to access: user.name, user.email, etc.
+```
+
+#### 5. Handling Error and Loading States
+```tsx
+type FetchState<T> = {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+};
+
+const [state, setState] = useState<FetchState<User[]>>({
+  data: null,
+  loading: true,
+  error: null,
+});
+```
+Then you can update this state cleanly after fetching.
+
+---
