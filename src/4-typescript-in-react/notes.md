@@ -582,3 +582,123 @@ By mastering generics with hooks, you now have the power to:
 - Leverage TypeScript for better DX (Developer Experience)
 
 ---
+
+## Section 6 - Component Composition & Render Props ([`06-component-composition`](./react-playground/src/concepts/06-component-composition/))
+
+React is built for **composition**, not inheritance. If you're still repeating the same layout logic or rewriting conditional wrappers, it's time to **level up** with proper component composition, powered by strong TypeScript types.
+
+This section focuses on turning your components into reusable, flexible, type-safe building blocks using techniques like **render props, component props, and HOCs (Higher-Order Components)**.
+
+---
+
+### 💡 Why This Matters
+Without proper typing, composition patterns become:
+- Hard to understand
+- Bug-prone
+- Impossible to reuse confidently
+
+But with TypeScript, you can ensure:
+- Components passed as props have the correct shape
+- Children are rendered correctly with the right props
+- HOCs preserve component type info (even generics)
+
+### ✅ 1. Passing Components as Props
+```tsx
+type Props = {
+  Component: React.ComponentType<{ label: string }>
+};
+
+const Wrapper: React.FC<Props> = ({ Component }) => {
+  return <Component label="Hello from Wrapper" />;
+};
+```
+✅ `React.ComponentType<T>`
+- This tells TypeScript that `Component` is a React component that expects props of type `T`.
+- Works for both functional and class components.
+
+### ✅ 2. Render Props Pattern
+Render props = passing a function as a child that receives data and returns JSX.
+
+```tsx
+type RenderProps = {
+  children: (count: number) => React.ReactNode;
+};
+
+const Counter: React.FC<RenderProps> = ({ children }) => {
+  const [count, setCount] = useState(0);
+  return (
+    <>
+      {children(count)}
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </>
+  );
+};
+
+// Usage:
+<Counter>
+  {(count) => <p>Current count is {count}</p>}
+</Counter>
+```
+🔐 Type Safety:
+- Ensures `children` is a function that takes a `number`
+- Autocomplete + inference works inside that function
+
+### ✅ 3. Conditional Rendering with as, children, or render Props
+Let’s build a generic Box that lets you decide which element or component to render:
+```tsx
+type BoxProps<T extends React.ElementType> = {
+  as?: T;
+  children?: React.ReactNode;
+} & React.ComponentPropsWithoutRef<T>;
+
+const Box = <T extends React.ElementType = 'div'>({
+  as,
+  children,
+  ...rest
+}: BoxProps<T>) => {
+  const Component = as || 'div';
+  return <Component {...rest}>{children}</Component>;
+};
+```
+✅ Now You Can Do:
+```tsx
+<Box as="button" onClick={() => alert("clicked")}>
+  Click me
+</Box>
+
+<Box as="a" href="https://example.com">
+  Link
+</Box>
+```
+✅ Props are fully inferred based on what `as` you provide!
+
+### ✅ 4. Higher Order Component (HOC) Typing
+Let’s say you have an HOC that adds loading behavior:
+```tsx
+function withLoading<T>(Component: React.ComponentType<T>) {
+  return (props: T & { loading: boolean }) => {
+    if (props.loading) return <p>Loading...</p>;
+    return <Component {...props} />;
+  };
+}
+```
+🧠 Points to Note:
+- `T` is the wrapped component’s props
+- `loading` is added to the enhanced component
+- Return component is type-safe and composable
+
+### ⚠️ Common Gotchas
+- ❌ Don’t use `any` or `unknown` for render props – always type explicitly.
+- ❌ Avoid props like `children?: ReactNode | (() => ReactNode)` unless needed — it creates ambiguous usage.
+- ❌ Don’t forget to preserve ref forwarding in HOCs using `React.forwardRef`.
+
+### 🎯 Goal Recap
+By the end of this section, you should:
+
+✅ Confidently pass components as props <br>
+✅ Use render props with full type inference <br>
+✅ Create polymorphic components with `as` <br>
+✅ Write and consume HOCs with proper type safety <br>
+✅ Compose UI like a senior engineer <br>
+
+---

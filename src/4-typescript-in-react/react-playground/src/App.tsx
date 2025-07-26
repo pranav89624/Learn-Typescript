@@ -3,7 +3,8 @@ import Layout from "./components/Layout";
 // import EventHandlingAndForms from "./concepts/02-events-and-forms";
 // import HooksAndRefs from "./concepts/03-hooks-and-refs";
 // import ContextApiExample from "./concepts/04-context-api";
-import CustomHooksExample from "./concepts/05-custom-hooks-generics";
+// import CustomHooksExample from "./concepts/05-custom-hooks-generics";
+import ComponentCompositionExamples from "./concepts/06-component-composition";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
       {/* <EventHandlingAndForms /> */}
       {/* <HooksAndRefs /> */}
       {/* <ContextApiExample /> */}
-      <CustomHooksExample />
+      {/* <CustomHooksExample /> */}
+      <ComponentCompositionExamples />
     </Layout>
   );
 }
