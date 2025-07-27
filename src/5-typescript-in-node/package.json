@@ -1,0 +1,36 @@
+{
+  "name": "5-typescript-in-node",
+  "version": "1.0.0",
+  "description": "Learn how to use TypeScript in a Node.js application",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node-esm' src/01-basic-types.ts",
+    "start": "tsc && node dist/01-basic-types.js",
+    "build": "tsc"
+  },
+  "keywords": [
+    "Node.js",
+    "TypeScript",
+    "Express",
+    "API",
+    "Development",
+    "Learning",
+    "Tutorial"
+  ],
+  "author": "Pranav Verma",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
