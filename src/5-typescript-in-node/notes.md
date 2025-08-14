@@ -206,3 +206,49 @@ Gives you async/await elegance.
 
 ---
 
+## Section 4 - Working with core Node.js built-in modules in a TypeScript environment ([04-node-builtins.ts](./src/04-node-builtins.ts))
+
+### Overview
+Node.js comes with a rich set of **built in modules** (core modules) for handling:
+- File paths, URLs, and OS info.
+- Timers, crypto operations, compression.
+- Working with buffers, streams, events.
+
+We’ll cover the most **commonly used** ones you’re likely to see in realworld backend code.
+
+###  Importing in ES Modules
+In ESM mode:
+```ts
+import path from "path";
+import { fileURLToPath } from "url";
+import os from "os";
+import crypto from "crypto";
+import { EventEmitter } from "events";
+```
+
+### Key Built-in Modules & Uses
+#### 📍 path
+- Platform independent way to work with file paths.
+- `path.join()`, `path.resolve()`, `path.basename()`, `path.extname()`.
+
+#### 🌐 url
+- In ESM, used to get `__dirname` and `__filename` via `fileURLToPath`.
+
+#### 💻 os
+- System info: platform, CPU cores, memory.
+- Methods like `os.type()`, `os.cpus()`, `os.freemem()`.
+
+#### 🔐 crypto
+- Create hashes, generate random IDs, encrypt/decrypt.
+- Example: `crypto.randomUUID()` for unique IDs.
+
+#### 📢 events
+- EventEmitter pattern for pub/sub.
+- Create custom events in Node apps.
+
+### TypeScript Tip
+- All core module types are bundled with `@types/node` (already in dev deps).
+- Use IntelliSense to discover available methods.
+
+---
+
