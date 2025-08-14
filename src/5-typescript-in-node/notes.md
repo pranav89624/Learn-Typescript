@@ -145,3 +145,64 @@ import greet, { PI, square } from './mathUtils.js';
 Be comfortable **exporting and importing functions, classes, and constants** in a Node.js + TypeScript environment using ES module syntax.
 
 ---
+
+## Section 3 - Working with the File System ([03-working-with-fs.ts](./src/03-working-with-fs.ts))
+
+### Overview
+The `fs` (File System) module in Node.js lets us interact with files and directories, reading, writing, updating, and deleting.
+
+In TypeScript, we get the benefit of **type safety** and IntelliSense when using `fs`, especially with options objects.
+
+### Importing in ES Modules
+Since we’re in **ESM mode**, we use:
+```ts
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+```
+To mimic `__dirname` and `__filename` (which don’t exist in ESM):
+```ts
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+```
+
+### Core FS Operations
+We’ll cover both **sync** and **async** variants.<br>
+Async versions use either **callbacks** or **Promises** (`fs.promises` API).
+
+#### ✅ Writing Files
+- `fs.writeFile` (async)
+- `fs.writeFileSync` (sync)
+- `Default overwrites file; use `{ flag: "a" }` to append.
+
+#### ✅ Reading Files
+- `fs.readFile` (async)
+- `fs.readFileSync` (sync)
+- Always specify encoding (`"utf-8"`) if you want a string instead of a `Buffer`.
+
+#### ✅ Appending Files
+- `fs.appendFile` (async)
+- `fs.appendFileSync` (sync)
+
+#### ✅ Deleting Files
+- `fs.unlink` (async)
+- `fs.unlinkSync` (sync)
+
+### Directories
+- Create: `fs.mkdir` / `fs.mkdirSync` (`{ recursive: true }` for nested)
+- Read: `fs.readdir`
+- Remove: `fs.rmdir` (deprecated) or `fs.rm` with `{ recursive: true }`
+
+### Error Handling
+- Always handle `err` in callbacks.
+- For `fs.promises`, wrap in `try/catch`.
+
+### Promises API Example
+Modern and cleaner:
+```ts
+await fs.promises.writeFile("file.txt", "Hello!");
+```
+Gives you async/await elegance.
+
+---
+
