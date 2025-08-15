@@ -252,3 +252,60 @@ import { EventEmitter } from "events";
 
 ---
 
+## Section 5 - Typesafe Environment Variables with Zod ([05-type-safe-env.ts](./src/05-type-safe-env.ts))
+
+### Overview
+Managing environment variables can be error prone. We’ll use **Zod** to create a schema for our env vars, ensuring they’re valid and correctly typed.
+
+### The Problem
+- `process.env` values are always **strings or undefined**, and TypeScript can’t infer real types.
+- If an environment variable is missing, we won’t know until runtime (and the app might crash later).
+- Hardcoding fallback defaults everywhere gets messy.
+
+### The Solution Zod + TypeScript
+We can:
+- Define a **runtime schema** for required and optional env vars.
+- Validate `process.env` at **startup**, so the app fails fast if something’s wrong.
+- Automatically infer **TypeScript types** from the schema.
+
+### Why Zod?
+- Works both at **runtime** (validates) and **compile time** (type inference).
+- Clear error messages if a variable is missing or invalid.
+- Zero extra boilerplate to keep TS and runtime in sync.
+
+### Typical Env Vars in a Backend App
+Examples:
+- `PORT` (number)
+- `DATABASE_URL` (string, must be a valid URL)
+- `NODE_ENV` (enum: `"development" | "production" | "test"`)
+
+### Implementation Flow
+1. Install Zod:
+    ```bash
+    npm install zod
+    ```
+2. Create a schema with `.object()`.
+3. Use `z.infer` to create a TypeScript type from it.
+4. Parse `process.env` at startup.
+5. Export the validated config object.
+
+### Benefits
+- Immediate app crash if env vars are missing or invalid.
+- No more `as string` or manual checks.
+- Works with `.env` files (if using `dotenv`).
+
+### Demo env Setup to use in this excercise :
+```env
+# Application environment: "development" | "production" | "test"
+NODE_ENV=development
+
+# Port number your app will run on
+PORT=3000
+
+# Example: Postgres DB URL (can be MySQL, Mongo, etc.)
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+```
+Place this file in the root of `5-typescript-in-node` folder as `.env`.
+
+---
+
