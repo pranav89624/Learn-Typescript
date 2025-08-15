@@ -355,3 +355,54 @@ server.listen(port, () => console.log(`Server running...`));
 ### RealWorld Use
 - Normally, you’d use Express or Fastify for production apps.
 - But this knowledge helps debug low level server issues.
+
+---
+
+## Section 7 - Express Basics ([07-express-basics.ts](./src/07-express-basics.ts))
+
+### Overview
+In this section, we’ll explore the basics of building a web server using Express and TypeScript. Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+
+### Key Concepts
+- **Middleware**: Functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle.
+- **Routing**: Defining endpoints (routes) for handling requests.
+- **Error Handling**: Centralized error handling for the application.
+
+### Why Express?
+- **Simplified API** over Node’s `http` module.
+- Middleware system for reusable request/response handling.
+- Builtin routing support (`app.get`, `app.post`, etc.).
+- Large ecosystem of middleware packages.
+
+### Installing Dependencies
+Since we’re in TypeScript:
+```bash
+npm install express
+npm install -D @types/express
+```
+
+### Core Concepts
+- **App Instance**: `const app = express();`
+- **Middleware**: Functions that run before request handlers.
+- **Routing**: `app.get("/path", handler)`
+- **JSON Support**: `app.use(express.json())`
+
+### Our Example Flow
+1. Use `env` from **05-type-safe-env.ts**`.
+2. Create an Express app.
+3. Add JSON body parsing middleware.
+4. Create:
+    - GET `/` → plain text
+    - GET `/json` → JSON
+    - POST `/echo` → returns received JSON
+5. 404 fallback handler.
+
+### TypeScript Tips for Express
+- Use the `Request`, `Response`, and `NextFunction` types from `express`.
+- For typed request bodies or params, you can use generics:
+  ```ts
+  Request<ParamsType, ResBodyType, ReqBodyType>
+  ```
+
+---
+
