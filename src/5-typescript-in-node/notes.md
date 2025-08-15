@@ -309,3 +309,49 @@ Place this file in the root of `5-typescript-in-node` folder as `.env`.
 
 ---
 
+## Section 6 - Creating a Simple HTTP Server ([06-simple-server.ts](./src/06-simple-server.ts))
+
+### Overview
+In this section, we’ll create a simple HTTP server using Node.js and TypeScript. This server will respond to different routes with plain text and JSON responses.
+
+### Why Vanilla HTTP First?
+Before jumping into Express, it’s important to see how a Node server works under the hood:
+- No frameworks, just the `http` module.
+- Full control over request/response handling.
+- You’ll appreciate what Express automates.
+
+### HTTP Module Basics
+```ts
+import http from "http";
+
+const server = http.createServer((req, res) => {
+  // handle request
+});
+
+server.listen(port, () => console.log(`Server running...`));
+```
+
+### Request & Response Objects
+- `req` (IncomingMessage) → contains URL, method, headers.
+- `res` (ServerResponse) → methods like:
+  - `.statusCode = 200`
+  - `.setHeader("Content-Type", "text/plain")`
+  - `.end("Hello World")`
+
+### TypeScript Tips
+- Both `req` and `res` have built-in Node types (`IncomingMessage` and `ServerResponse`).
+- You don’t need to manually type them unless doing custom wrappers.
+
+### Our Example Flow
+1. Import and use `env` from **05-type-safe-env.ts**.
+
+2. Start server on `env.PORT`.
+
+3. Handle:
+    - `/` → plain text
+    - `/json` → JSON response
+    - Anything else → 404
+
+### RealWorld Use
+- Normally, you’d use Express or Fastify for production apps.
+- But this knowledge helps debug low level server issues.
