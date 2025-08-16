@@ -406,3 +406,51 @@ npm install -D @types/express
 
 ---
 
+## Section 8 - Error Handling ([08-error-handling.ts](./src/08-error-handling.ts))
+
+### Overview
+Error handling is crucial in any application to ensure that unexpected issues do not crash the server and provide meaningful feedback to clients.
+
+### Why Structured Error Handling?
+- Avoids app crashes due to unhandled exceptions.
+- Makes debugging easier with consistent error logging.
+- Provides clear client responses for API endpoints.
+- Essential for production-ready apps.
+
+### Core Concepts
+**Node.js**
+- Use `try/catch` for synchronous and async code.
+- For async callbacks, always handle errors in the callback.
+- For promises: `catch()` or `try/catch` with `async/await`.
+
+**Express**
+- Middleware handles errors if you pass them to `next(err)`.
+- Custom error-handling middleware must have four parameters:
+  `(err, req, res, next)`
+
+### Creating Custom Error Classes
+- TypeScript allows custom Error classes with extra fields like `statusCode`.
+- Example:
+  ```ts
+  class AppError extends Error {
+    statusCode: number;
+    constructor(message: string, statusCode = 500) {
+      super(message);
+      this.statusCode = statusCode;
+    }
+  }
+  ```
+
+### Practical Example
+We’ll demonstrate:
+1. Synchronous error handling.
+2. Async error handling (with `async/await`).
+3. Express custom error middleware.
+4. Sending structured JSON responses with `statusCode` and `message`.
+
+### TypeScript Tips
+- Always type your error handler params (`err: Error | AppError`).
+- Use `instanceof` to distinguish custom errors from native errors.
+
+---
+
