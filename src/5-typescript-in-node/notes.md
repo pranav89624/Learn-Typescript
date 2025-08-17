@@ -454,3 +454,44 @@ We’ll demonstrate:
 
 ---
 
+## Section 9 - Routing ([09-routing.ts](./src/09-routing.ts))
+
+### Overview
+Routing is a fundamental concept in web applications, allowing you to define how your application responds to client requests for specific endpoints. In Express, routing is handled through the use of the `Router` class, which provides a way to modularize your routes and keep your code organized.
+
+### Why Modular Routing?
+- Keeps code organized by grouping related endpoints (e.g., `/users`, `/posts`).
+- Easier to scale and maintain large codebases.
+- Prevents `app.ts` from becoming a huge, unreadable file.
+
+### Learning Repo vs Real World
+- ⚠️ In this repo (learning purpose): We are writing all routing code in a single file (09-routing.ts) to keep concepts self-contained and easy to follow.
+- ✅ In a real-world project: You would place routers, controllers, and services in separate files/folders for maintainability. Example structure:
+  ``` plaintext
+  src/
+  ├── routes/
+  │   └── user.routes.ts
+  ├── controllers/
+  │   └── user.controller.ts
+  ├── services/
+  │   └── user.service.ts
+  └── app.ts
+  ```
+
+### Express Router Basics
+- Import `Router` from `express`.
+- Define endpoints on it (`router.get`, `router.post`).
+- Mount routers in `app` with `app.use("/prefix", router)`.
+
+### Example Flow
+
+In this file we:
+1. Created a `userRouter`.
+2. Added routes:
+   - `GET /api/users` → list users.
+   - `POST /api/users` → add a user.
+3. Mounted it in `app`.
+4. Kept a root `/` route and a 404 fallback.
+
+---
+
