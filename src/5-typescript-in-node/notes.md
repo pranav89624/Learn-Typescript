@@ -498,93 +498,68 @@ In this file we:
 ## Section 10 - Controllers and Services ([10-controllers-and-services.ts](./src/10-controllers-and-services.ts))
 
 ### Overview 
-When building scalable backends, separating concerns is critical. Instead of mixing route handling, business logic, and data manipulation in a single place, we break them into distinct layers:
-- **Controller Layer** → Deals with `req` (request) and `res` (response).
-- **Service Layer** → Contains the core business logic.
-- **Route Layer** → Maps endpoints (`/api/...`) to controllers.
+Middleware functions are the **backbone of Express.js**.<br/>
+Think of them as "**interceptors**" in the request-response cycle:
+- They can **log, validate, transform, authenticate**, or even **terminate** requests.
+- Middleware sits **between** the client request and your final route handler.
 
-This separation makes the project **maintainable, testable,** and **extendable**.
+### The Middleware Flow
+```plaintext
+Client → Middleware(s) → Controller/Route → Response
+```
+Example with multiple middlewares:
+```plaintext
+Client → Logger Middleware → Validation Middleware → Controller/Route → Response
+```
+Each middleware runs in order, and decides whether to:
+- Pass control to the next middleware using `next()`.
+- End the cycle with a response.
 
 ### Learning vs Real World
-- ⚠️ **This Repo (Learning Purpose)**:
-  - Everything (routes, controllers, services) is in one file to keep things simple and visible.
-- ✅ **Real World Structure**:
-  ```plaintext
-  src/
-  ├── routes/
-  │   └── user.routes.ts
-  ├── controllers/
-  │   └── user.controller.ts
-  ├── services/
-  │   └── user.service.ts
-  ├── models/
-  │   └── user.model.ts   // e.g., DB schema
-  ```
-This modular structure ensures **separation of responsibilities** and better **scaling**.
+- ⚠️ This Repo (Learning Purpose):
+    - We will put all middlewares in one file for clarity.
+- ✅ Real World Practice:
+```plaintext
+src/
+├── middlewares/
+│   ├── logger.middleware.ts
+│   ├── validate.middleware.ts
+│   └── auth.middleware.ts
+├── controllers/
+├── services/
+└── routes/
+```
 
 ### Code Walkthrough
-1. **Service Layer** (Business Logic)
-    - `getAllUsers()` → returns all users from in-memory DB.
-    - `createUser(name)` → validates and creates a new user.
+We’ll implement three middlewares:
 
-2. **Controller Layer** (Request/Response Handling)
-    - `getUsers(req, res)` → responds with all users.
-    - `addUser(req, res)` → validates input, delegates to service, and sends response.
+1. Logger Middleware
+    - Logs HTTP method and path.
+    - Example: `GET /api/users`.
 
-3. **Route Layer** (API Endpoints)
-    - `GET /api/users` → returns all users.
-    - `POST /api/users` → adds a new user.
+2. Validation Middleware
+    - Checks if required fields exist in the request body.
+    - Example: Rejects `POST /api/users` without a `name`.
 
-4. **App Setup**
-    - JSON body parsing with `express.json()`.
-    - Root route → Welcome message.
-    - 404 handler for invalid routes.
+3. Error Handling Middleware
+    - Catches thrown errors and sends a proper response.
 
-### Request-Response Flow
-```plaintext
-Client → Request → Controller → Service → Controller → Response → Client
-```
-Example:
-1. `POST /api/users { "name": "Bob" }`
-2. Controller (`addUser`) validates input.
-3. Service (`createUser`) adds new user to DB.
-4. Controller returns `{ id: 3, name: "Bob" }`.
+### Request-Response Flow Example
+1. GET /api/users
+    - `logger` → prints `[2025-08-17T18:12:00] GET /api/users`.
+    - Route returns `[ { id: 1, name: "Pranav" } ]`.
 
-### Testing the Endpoints
+2. POST /api/users { "name": "Alice" }
+    - `logger` → logs request.
+    - `validateUser` → checks name field → OK.
+    - Route → returns `{ id: 2, name: "Alice" }`.
 
-1. Get all users
-    ```bash
-      curl http://localhost:3000/api/users
-    ```
-    Response:
-    ```json
-    [
-      { "id": 1, "name": "Pranav" },
-      { "id": 2, "name": "Alice" }
-    ]
-    ```
+3. POST /api/users { } (no name)
+    - `logger` → logs request.
+    - `validateUser` → rejects with `400 Bad Request`.
 
-2. Add a new user
-    ```bash
-    curl -X POST http://localhost:3000/api/users \
-      -H "Content-Type: application/json" \
-      -d '{"name":"Bob"}'
-    ```
-    Response:
-    ```json
-    { "id": 3, "name": "Bob" }
-    ```
-
-### Benefits of Controller-Service Separation
-- **Maintainability** → Easier to locate and modify logic.
-- **Testability** → You can test services without worrying about Express boilerplate.
-- **Reusability** → Services can be reused across multiple controllers.
-- **Scalability** → As app grows, this structure prevents chaos.
-
-### When to Use This Pattern
-- Small scripts → Might be overkill.
-- Medium/Large apps → Essential for keeping things organized.
-- Team projects → Absolutely required to avoid codebase confusion.
-
----
-
+### Benefits of Middleware
+- **Reusable** → Write once, apply everywhere.
+- **Composable*** → Chain multiple middlewares.
+- **Centralized Error Handling** → Cleaner controllers.
+- **Security** → Use for auth, rate limiting, CORS.
