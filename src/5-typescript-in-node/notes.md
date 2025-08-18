@@ -659,3 +659,84 @@ We’ll implement three middlewares:
 
 ---
 
+## Section 12 - Global Types ([12-global-types.ts](./src/12-global-types.ts))
+
+### Overview
+In TypeScript, global types can be declared to enhance the development experience by providing type safety and autocompletion across the entire application. This is particularly useful in larger projects where certain types are reused frequently.
+
+### Learning Goal
+This file introduces global and shared types in Node + TypeScript:
+- Domain models (e.g., `User`, `Role`)
+- Utility types (`Nullable`, `ApiResponse`)
+- Global augmentation (`Express.Request.user`)
+
+### Domain Models
+- `User` interface defines the shape of user objects.
+- `UserRole` enum provides restricted role options.
+
+```ts
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
+enum UserRole { ADMIN, USER, GUEST }
+```
+
+Why:
+- Enums ensure only valid roles are used.
+- Interfaces give structure and type safety for user objects.
+
+### Utility Types
+- `Nullable<T>` → allows a value to be `T` or `null`.
+- `ApiResponse<T>` → standardizes API responses:
+
+```ts
+type ApiResponse<T> = {
+  success: boolean;
+  data?: T;
+  error?: string;
+};
+```
+
+Why:
+- Simplifies response typing for APIs.
+- Makes error handling explicit.
+
+Example Usage:
+```ts
+const successResponse: ApiResponse<User> = { success: true, data: demoUser };
+const errorResponse: ApiResponse<null> = { success: false, error: "Something went wrong" };
+```
+
+### Global Declaration / Express Augmentation
+- Adds a `user` property to the **Express request object**:
+
+```ts
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
+```
+
+Why:
+- Lets you safely attach user info after authentication.
+- Avoids `any` and improves IntelliSense in route handlers.
+
+**Note**: In real-world projects, this goes in a separate `express.d.ts` file.
+
+### Demo Section
+```ts
+const demoUser: User = { id: "1", name: "Alice", email: "alice@example.com", role: UserRole.USER };
+console.log({ successResponse, errorResponse });
+```
+**Purpose**:
+- Shows how the types integrate together in practice.
+- Learners can modify or expand this to try CRUD like operations.
+
+---
+
