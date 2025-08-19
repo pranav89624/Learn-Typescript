@@ -740,3 +740,119 @@ console.log({ successResponse, errorResponse });
 
 ---
 
+## Section 13 - API Response Types ([13.api-response-types.ts](./src/13-api-response-types.ts))
+
+### Overview
+In this section, we define a generic API response type that can be used across different endpoints and services. This promotes consistency and reduces code duplication.
+
+### Why API Response Types Matter
+When working with APIs in TypeScript, consistency is everything.<br/>
+If every API endpoint sends data in a different shape, clients (frontend, mobile apps, etc.) will struggle to consume it reliably.
+
+That’s where **typed response contracts** come in:
+- Ensure **uniform structure** across all responses.
+- Provide **type safety** (you can’t accidentally return wrong fields).
+- Improve **developer experience** (IDE autocomplete & error catching).
+
+### Key Concepts in This Section
+
+1. **Generic Response Wrapper**
+
+    We created a reusable wrapper type:
+    ```ts
+    export type ApiResponse<T> = {
+      success: boolean;
+      data?: T;
+      error?: string;
+    };
+    ```
+    - `T` is generic → allows flexibility for any type of response.
+    - `success` indicates whether the request worked.
+    - `data` holds the actual response payload.
+    - `error` gives the error message when something fails.
+
+    In real-world projects, this becomes a **standard response contract**.
+
+2. **Domain Model Example**
+
+    We defined a `Product` type to demonstrate usage:
+
+    ```ts
+    interface Product {
+      id: string;
+      name: string;
+      price: number;
+    }
+    ```
+    This simulates a real world object returned by an API.
+
+3. **Success & Error Response**
+
+    Examples of structured API responses:
+
+    ```ts
+    const productResponse: ApiResponse<Product> = {
+      success: true,
+      data: { id: "p1", name: "Laptop", price: 800 },
+    };
+
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: "Product not found",
+    };
+    ```
+    - The success **response** contains `data`.
+    - The error **response** contains `error`.
+    - Both follow the **same structure**, making client-side handling easier.
+
+4. **Reusable Response Factory**
+
+    Instead of manually writing objects every time, we wrote a helper:
+
+    ```ts
+    function makeResponse<T>(data: T | null, error?: string): ApiResponse<T> {
+      if (error) {
+        return { success: false, error };
+      }
+      return { success: true, data: data as T };
+    }
+    ```
+    - If `error` exists → returns an error response.
+    - Otherwise → returns a success response.
+
+    This is a **DRY (Don’t Repeat Yourself)** way of generating responses.
+
+5. **Demo Usage**
+
+    ```ts
+    const res1 = makeResponse<Product>({ id: "p2", name: "Phone", price: 500 });
+    const res2 = makeResponse<null>(null, "Something went wrong");
+
+    console.log("Success:", res1);
+    console.log("Error:", res2);
+    ```
+
+    Outputs:
+    ```
+    Success: { success: true, data: { id: 'p2', name: 'Phone', price: 500 } }
+    Error: { success: false, error: 'Something went wrong' }
+    ```
+
+### Real-World Best Practices
+1. **Consistency** → Every API route should use this contract.
+2. **HTTP Status Codes + Typed Body** → Still return proper `200, 400, 404` etc., but the body stays typed.
+3. **Optional Metadata** → Sometimes you add pagination, request IDs, etc. Example:
+
+  ```ts
+    export type ApiResponse<T> = {
+      success: boolean;
+      data?: T;
+      error?: string;
+      meta?: { page?: number; total?: number };
+    };
+  ```
+4. **Avoid Overloading Error Fields** → Keep `error` simple and clean.
+5. **Frontend Integration** → Use these types in frontend projects too for end-to-end type safety.
+
+>**In this learning repo, everything is in one file for simplicity.<br/>
+>In real projects, you’d split `types/ApiResponse.ts` and import it wherever needed.**
