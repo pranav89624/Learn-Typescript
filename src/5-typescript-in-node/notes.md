@@ -856,3 +856,68 @@ That’s where **typed response contracts** come in:
 
 >**In this learning repo, everything is in one file for simplicity.<br/>
 >In real projects, you’d split `types/ApiResponse.ts` and import it wherever needed.**
+
+---
+
+## Section 14 - Utils and Helpers
+
+### Why Utilities & Helpers?
+- In **real-world projects**, you’ll often reuse the same logic in multiple places (e.g., ID generation, formatting text, parsing JSON safely).
+- Instead of duplicating that logic everywhere, we extract them into **utility functions** (utils) or helper modules.
+- This keeps the codebase:
+    - **DRY (Don’t Repeat Yourself)**
+    - **Easier to maintain**
+    - **More testable and reusable**
+
+⚡ Repo note:
+In this learning repo, we keep everything in one file for simplicity.
+
+👉 In production projects, utilities are usually grouped into files like `string-utils.ts`, `number-utils.ts`, `date-utils.ts`, etc.
+
+### 🔑 Functions
+
+#### 1. `generateId(prefix?: string): string`
+- **Creates a quick unique ID.**
+- Example: `generateId("user") → "user-x3fz8kq"`
+- ✅ Great for temporary identifiers.  
+- ⚠️ Use **UUID** for production uniqueness.
+
+#### 2. `sleep(ms: number): Promise<void>`
+- **Pauses execution for given milliseconds.**
+- Example: `await sleep(1000)` → waits 1 second.
+- ✅ Useful in retries, testing, rate limiting.  
+- ❌ Don’t block main logic unnecessarily.
+
+#### 3. `capitalize(str: string): string`
+- **Uppercases first character.**
+- `"typescript"` → `"Typescript"`.
+- ✅ For formatting labels, names.  
+- 📦 Alternative: `lodash.capitalize`.
+
+#### 4. `clamp(value: number, min: number, max: number): number`
+- **Restricts number to a range.**
+- `clamp(15, 0, 10)` → `10`.
+- ✅ Perfect for ratings, sliders, pagination.
+
+#### 5. `safeJsonParse<T>(input: string): T | null`
+- **Safely parses JSON, returns `null` if invalid.**
+- `safeJsonParse('{"a":1}')` → `{ a: 1 }`.
+- `safeJsonParse("oops")` → `null`.
+- ✅ Good when handling **external APIs / user input**.  
+- 🚨 Always validate parsed data (e.g., with Zod).
+
+### ⚡ Demo Showcase
+```ts
+console.log(generateId("user"));
+console.log(capitalize("hello"));
+console.log(clamp(99, 0, 10));
+console.log(safeJsonParse('{"ok":true}'));
+await sleep(1000);
+console.log("Done after 1s!");
+```
+
+### 📝 Takeaways
+- Utilities = **building blocks** for clean code.
+- Write small, pure functions.
+- In real projects → split into **string-utils.ts**, **number-utils.ts**, etc.
+- Use well-tested libraries when reliability is critical.
