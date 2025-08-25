@@ -1041,4 +1041,45 @@ src/
 
  ---
 
- 
+## Section 16 - Testing Basics in TypeScript (with Vitest) ([16-testing-basics.test.ts](./src/16-testing-basics.test.ts))
+
+### Why Testing?
+
+Testing ensures our code behaves as expected and gives us confidence when making changes. Even in a learning repo, writing small tests helps in:
+- Catching bugs early
+- Documenting how code should work
+- Practicing real-world workflows
+
+### Setup Recap
+- Installed Vitest as the test runner.
+- Added `"test": "vitest"` script in `package.json`.
+- Tests are written inside `.test.ts` files.
+
+### File Naming Conventions
+Vitest automatically looks for test files matching this pattern:
+```markdown
+*.test.ts
+*.spec.ts
+```
+**Important**: If you just name your file `16-testing-basics.ts`, Vitest won’t run it.<br />
+Correct name: `16-testing-basics.test.ts`
+
+This is the most standard approach.
+
+### Running Tests
+Use the following command:
+
+```bash
+npm test
+```
+
+This runs **all tests** in your repo.<br />
+You can also run tests interactively and filter by pressing `p` when Vitest is running.
+
+### Key Takeaways
+- Always name test files with `.test.ts` (or `.spec.ts`) so Vitest detects them.
+- Keep tests **small and focused** test one unit of logic at a time.
+- Tests should be:
+    - Readable (clear what’s being tested)
+    - Repeatable (always give the same result)
+    - Isolated (not dependent on external state)
