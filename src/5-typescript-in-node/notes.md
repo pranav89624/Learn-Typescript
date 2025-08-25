@@ -859,7 +859,7 @@ That’s where **typed response contracts** come in:
 
 ---
 
-## Section 14 - Utils and Helpers
+## Section 14 - Utils and Helpers ([14-utils-and-helpers.ts](./src/14-utils-and-helpers.ts))
 
 ### Why Utilities & Helpers?
 - In **real-world projects**, you’ll often reuse the same logic in multiple places (e.g., ID generation, formatting text, parsing JSON safely).
@@ -921,3 +921,124 @@ console.log("Done after 1s!");
 - Write small, pure functions.
 - In real projects → split into **string-utils.ts**, **number-utils.ts**, etc.
 - Use well-tested libraries when reliability is critical.
+
+---
+
+## Section 15 - JWT Based Authentication ([15-auth-jwt.ts](./src/15-auth-jwt.ts))
+
+In this section, we introduce **JWT (JSON Web Token)** authentication in TypeScript.<br />
+JWTs are widely used in modern applications for **stateless authentication**.
+
+> **Reminder**: In this learning repo, everything is shown in a **single file** for clarity.
+> In real-world projects, authentication is split into `auth/`, `routes/`, `middleware/`, etc.
+
+### 🔑 What is JWT?
+- **JWT** = JSON Web Token, a compact way to securely transmit information between parties.
+- Contains three parts:
+    1. **Header** (algorithm & token type)
+    2. **Payload** (user data)
+    3. **Signature** (to verify token integrity)
+
+### 🛠️ Code Walkthrough
+
+#### 1. User Payload Type
+```ts
+interface UserPayload {
+  id: string;
+  email: string;
+}
+```
+- Defines the **shape of data** stored in a token.
+- Typically includes **user ID**, **email**, and sometimes **roles/permissions**.
+
+#### 2. Token Response Type
+```ts
+interface TokenResponse {
+  token: string;
+  expiresIn: string;
+}
+```
+- Standard structure for sending tokens back to clients.
+- Keeps the API response predictable.
+  
+#### 3. Secret Key
+```ts
+const SECRET_KEY = "supersecret123";
+```
+- Secret used to **sign & verify** tokens.
+- 🚨 In real-world projects:
+    - Never hardcode secrets.
+    - Use `process.env.JWT_SECRET`.
+    - Store securely in `.env` files or secret managers.
+
+#### 4. Generate a JWT
+```ts
+function generateToken(payload: UserPayload): TokenResponse {
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+  return { token, expiresIn: "1h" };
+}
+```
+- Uses `jwt.sign()` to create a token.
+- Includes:
+    - Payload → `UserPayload`
+    - Secret Key → `SECRET_KEY`
+    - Expiration Time → `"1h"`
+
+#### 5. Verify a JWT
+```ts
+function verifyToken(token: string): UserPayload | null {
+  try {
+    return jwt.verify(token, SECRET_KEY) as UserPayload;
+  } catch (error) {
+    return null;
+  }
+}
+```
+- Uses `jwt.verify()` to validate the token.
+- If valid → returns decoded `UserPayload`.
+- If invalid/expired → returns `null`.
+
+#### 6. Demo Usage
+```ts
+const user: UserPayload = { id: "u123", email: "user@example.com" };
+
+const authToken = generateToken(user);
+console.log("Generated Token:", authToken);
+
+const decoded = verifyToken(authToken.token);
+console.log("Decoded Payload:", decoded);
+
+const invalid = verifyToken("fake.token.value");
+console.log("Invalid Token Result:", invalid);
+```
+-  Generates a token
+-  Verifies token and retrieves payload
+-  Handles invalid token gracefully
+
+### Key Learnings
+- JWT allows **stateless authentication** (no server-side session storage).
+- Tokens should always be **short-lived** (e.g., 15m – 1h).
+- Use **Refresh Tokens** for re-issuing access tokens (not covered here).
+- Store JWTs securely:
+  - **Frontend**: in `HttpOnly` cookies (safer) or `localStorage` (less secure).
+  - **Backend**: never expose your signing secret.
+
+### Real-World Structure
+Instead of one file:
+
+``` plaintext
+src/
+ ├── auth/
+ │    ├── generateToken.ts
+ │    ├── verifyToken.ts
+ │    └── auth.middleware.ts
+ ├── routes/
+ │    └── user.routes.ts
+ └── index.ts
+ ```
+
+ With this, you now understand **JWT basics** and how to implement them in TypeScript!
+
+ ---
+
+ 
