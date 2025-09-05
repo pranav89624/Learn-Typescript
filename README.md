@@ -160,7 +160,7 @@ Learning TypeScript/
 1. **Clone the repository**
    ```bash
    git clone https://github.com/pranav89624/Learn-Typescript.git
-   cd Learning-Typescript
+   cd Learn-Typescript
    ```
 
 2. **Install dependencies**
